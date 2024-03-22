@@ -1,0 +1,25 @@
+{
+	"name": "nestjs-remix-monorepo",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"dev": "turbo dev",
+		"lint": "turbo lint",
+		"build": "turbo build",
+		"typecheck": "turbo typecheck",
+		"start": "cd backend && npm run start",
+		"clean-node-modules": "rm -rf {node_modules,package-lock.json} **/{node_modules,package-lock.json}",
+		"clean-turbo-cache": "rm -rf .turbo **/.turbo"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"packageManager": "npm@10.2.3",
+	"workspaces": [
+		"backend",
+		"frontend",
+		"packages/*"
+	]
+}

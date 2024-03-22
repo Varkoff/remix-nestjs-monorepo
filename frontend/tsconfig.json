@@ -1,0 +1,25 @@
+{
+	"extends": "@virgile/typescript-config/base.json",
+	"include": ["env.d.ts", "**/*.ts", "**/*.tsx", "../playwright.config.ts"],
+	"exclude": ["index.d.cts"],
+	"compilerOptions": {
+		"module": "ESNext",
+		"skipLibCheck": true,
+		"lib": ["DOM", "DOM.Iterable", "ES2019"],
+		"isolatedModules": true,
+		"esModuleInterop": false,
+		"jsx": "react-jsx",
+		"noImplicitAny": false,
+		"moduleResolution": "bundler",
+		"resolveJsonModule": true,
+		"target": "ES2019",
+		"strict": true,
+		"allowJs": true,
+		"forceConsistentCasingInFileNames": true,
+		"baseUrl": ".",
+		"paths": {
+			"~/*": ["./app/*"]
+		},
+		"noEmit": true
+	}
+}
