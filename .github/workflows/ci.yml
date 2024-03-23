@@ -1,0 +1,123 @@
+name: 🚀 Deploy
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request: {}
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  lint:
+    name: ⬣ ESLint
+    runs-on: ubuntu-latest
+    env:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+      TURBO_REMOTE_ONLY: true
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Application
+        run: npm run build
+
+      - name: 🔬 Lint
+        run: npm run lint
+
+  typecheck:
+    name: ʦ TypeScript
+    runs-on: ubuntu-latest
+    env:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+      TURBO_REMOTE_ONLY: true
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Application
+        run: npm run build
+
+      - name: 🔎 Type check
+        run: npm run typecheck --if-present
+
+  build:
+    name: 🐳 build
+    uses: ./.github/workflows/build.yml
+    secrets: inherit
+
+  deploy:
+    name: 🚀 Deploy
+    runs-on: [self-hosted]
+    needs: [build, lint, typecheck]
+    # needs: [build]
+    # only build/deploy main branch on pushes
+    # if: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev') && github.event_name == 'push' }}
+    if: ${{ (github.ref == 'refs/heads/main') && github.event_name == 'push' }}
+    env:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+      TURBO_REMOTE_ONLY: true
+
+    steps:
+      - name: Cache node modules
+        uses: actions/cache@v4.0.0
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v4.1.1
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      #   - name: 🚀 Run Docker Compose on Staging
+      #     if: ${{ github.ref == 'refs/heads/dev' }}
+      #     env:
+      #       NODE_ENV: staging
+      #     run: |
+      #       docker pull varkoff/nestjs-remix-monorepo:latest
+      #       docker compose -f docker-compose.staging.yaml up -d
+      #       docker system prune --all --volumes --force
+
+      - name: 🚀 Run Docker Compose on Production
+        if: ${{ github.ref == 'refs/heads/main' }}
+        env:
+          NODE_ENV: production
+        run: |
+          docker pull varkoff/nestjs-remix-monorepo:production
+          docker compose -f docker-compose.prod.yaml up -d
+          docker system prune --all --volumes --force

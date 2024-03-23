@@ -21,5 +21,8 @@
 		"backend",
 		"frontend",
 		"packages/*"
-	]
+	],
+	"devDependencies": {
+		"turbo": "^1.13.0"
+	}
 }

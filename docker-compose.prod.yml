@@ -1,0 +1,13 @@
+services:
+  monorepo_prod:
+    environment:
+      - NODE_ENV
+
+    container_name: nestjs-remix-monorepo-prod
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    image: varkoff/nestjs-remix-monorepo:production
+    restart: always
+    ports:
+      - 3000:3000
