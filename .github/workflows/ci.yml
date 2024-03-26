@@ -119,5 +119,5 @@ jobs:
           NODE_ENV: production
         run: |
           docker pull varkoff/nestjs-remix-monorepo:production
-          docker compose -f docker-compose.prod.yaml up -d
+          docker compose -f docker-compose.prod.yml up -d
           docker system prune --all --volumes --force
