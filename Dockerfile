@@ -62,5 +62,4 @@ COPY --chown=remix-api:nodejs --from=installer /app/node_modules/@virgile/eslint
 
 COPY --chown=remix-api:nodejs --from=builder /app/backend/start.sh ./backend/start.sh
 
-# RUN cd backend && npm run start
 ENTRYPOINT [ "backend/start.sh" ]
