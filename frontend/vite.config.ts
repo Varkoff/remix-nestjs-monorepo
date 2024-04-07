@@ -1,6 +1,6 @@
-import { resolve } from 'path';
 import { vitePlugin as remix } from '@remix-run/dev';
 import { installGlobals } from '@remix-run/node';
+import { resolve } from 'path';
 import { flatRoutes } from 'remix-flat-routes';
 import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
@@ -37,12 +37,12 @@ export default defineConfig({
 			serverModuleFormat: 'esm',
 
 			routes: async (defineRoutes) => {
-				return flatRoutes('routes', defineRoutes, {
+				return flatRoutes("routes", defineRoutes, {
 					ignoredRouteFiles: [
-						'.*',
-						'**/*.css',
-						'**/*.test.{js,jsx,ts,tsx}',
-						'**/__*.*',
+						".*",
+						"**/*.css",
+						"**/*.test.{js,jsx,ts,tsx}",
+						"**/__*.*",
 						// This is for server-side utilities you want to colocate next to
 						// your routes without making an additional directory.
 						// If you need a route that includes "server" or "client" in the
@@ -51,7 +51,7 @@ export default defineConfig({
 						// 	'**/*.client.*',
 					],
 					// Since process.cwd() is the server directory, we need to resolve the path to remix project
-					appDir: resolve(__dirname, 'app'),
+					appDir: resolve(__dirname, "app"),
 				});
 			},
 		}),
