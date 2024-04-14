@@ -36,9 +36,8 @@ ENV TURBO_TOKEN=$TURBO_TOKEN
 ENV TZ=Europe/Paris
 ENV NODE_ENV="production"
 
-# ADD api/prisma api/prisma
-
-# RUN cd api && npx prisma generate
+ADD backend/prisma backend/prisma
+RUN cd backend && npx prisma generate
 
 RUN npm run build
 

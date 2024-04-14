@@ -6,7 +6,7 @@ import { RemixService } from './remix.service';
 
 @Controller()
 export class RemixController {
-  constructor(private remixService: RemixService) {}
+  constructor(private remixService: RemixService) { }
 
   @All('*')
   async handler(
@@ -18,7 +18,7 @@ export class RemixController {
     return createRequestHandler({
       build: await getServerBuild(),
       getLoadContext: () => ({
-        toto: 'Cette stack est géniale',
+        user: request.user,
         remixService: this.remixService,
       }),
     })(request, response, next);
