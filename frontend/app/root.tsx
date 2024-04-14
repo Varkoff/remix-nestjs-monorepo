@@ -1,25 +1,45 @@
-import { type LinksFunction } from '@remix-run/node';
+import { json, type LinksFunction, type LoaderFunctionArgs } from "@remix-run/node";
 import {
 	Links,
 	Meta,
 	Outlet,
 	Scripts,
 	ScrollRestoration,
+	useRouteLoaderData
 } from '@remix-run/react';
 import { type RemixService } from '@virgile/backend';
 import { Footer } from './components/Footer';
 import { Navbar } from './components/Navbar';
 import stylesheet from './global.css?url';
 import logo from './routes/_assets/logo-coup-de-pouce-dark.png';
+import { getOptionalUser } from "./server/auth.server";
 
 export const links: LinksFunction = () => [
 	{ rel: 'stylesheet', href: stylesheet },
 ];
 
+
+export const loader = async ({ request, context }: LoaderFunctionArgs) => {
+	const user = await getOptionalUser({ context })
+	return json({
+		user
+	});
+};
+
+export const useOptionalUser = () => {
+	const data = useRouteLoaderData<typeof loader>("root")
+	if (!data) {
+		return null;
+		// throw new Error('Root Loader did not return anything')
+	}
+	return data.user
+}
+
+
 declare module '@remix-run/node' {
 	interface AppLoadContext {
-		toto: string;
 		remixService: RemixService;
+		user: unknown
 	}
 }
 
