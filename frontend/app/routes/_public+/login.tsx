@@ -19,6 +19,7 @@ export const loader = async ({ request, context }: LoaderFunctionArgs) => {
 
 export const action = async ({ request, context }: ActionFunctionArgs) => {
     const formData = await request.formData();
+
     const submission = await parseWithZod(formData, {
         async: true,
         schema: LoginSchema.superRefine(async (data, ctx) => {
