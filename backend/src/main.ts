@@ -21,8 +21,9 @@ async function bootstrap() {
   const redisUrl = process.env.REDIS_URL || "redis://localhost:6379"
   const redisClient = new Redis(redisUrl, {
 
+  }).on('error', console.error).on('connect', () => {
+    console.log('Connected to Redis');
   });
-  redisClient.connect().catch(console.error)
 
   // Initialize store
   const redisStore = new RedisStore({
@@ -41,7 +42,7 @@ async function bootstrap() {
       cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
         sameSite: "lax",
-        secure: false
+        secure: process.env.NODE_ENV === 'production',
       }
     }),
   )
