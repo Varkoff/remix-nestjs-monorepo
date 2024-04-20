@@ -1,6 +1,11 @@
 import { getFormProps, getInputProps, useForm } from '@conform-to/react';
 import { getZodConstraint, parseWithZod } from '@conform-to/zod';
-import { json, redirect, type ActionFunctionArgs, type LoaderFunctionArgs } from '@remix-run/node';
+import {
+    json,
+    redirect,
+    type ActionFunctionArgs,
+    type LoaderFunctionArgs,
+} from '@remix-run/node';
 import { Form, useActionData, useNavigation } from '@remix-run/react';
 import { z } from 'zod';
 import { Field } from '~/components/forms';
@@ -8,13 +13,12 @@ import { Button } from '~/components/ui/button';
 import { getOptionalUser } from '~/server/auth.server';
 
 export const loader = async ({ context }: LoaderFunctionArgs) => {
-    const user = await getOptionalUser({ context })
+    const user = await getOptionalUser({ context });
     if (user) {
-        return redirect('/')
+        return redirect('/');
     }
     return null;
 };
-
 
 const RegisterSchema = z.object({
     email: z
@@ -24,15 +28,14 @@ const RegisterSchema = z.object({
         .email({
             message: 'Cet email est invalide.',
         }),
-    name: z.string({
-        required_error: "Le prénom est obligatoire"
+    firstname: z.string({
+        required_error: 'Le prénom est obligatoire',
     }),
     password: z.string({ required_error: 'Le mot de passe est obligatoire.' }),
 });
 
 export const action = async ({ request, context }: ActionFunctionArgs) => {
     const formData = await request.formData();
-
     const submission = await parseWithZod(formData, {
         async: true,
         schema: RegisterSchema.superRefine(async (data, ctx) => {
@@ -48,7 +51,7 @@ export const action = async ({ request, context }: ActionFunctionArgs) => {
                 ctx.addIssue({
                     code: 'custom',
                     path: ['email'],
-                    message: "Cet utilisateur existe déjà.",
+                    message: 'Cet utilisateur existe déjà.',
                 });
             }
         }),
@@ -62,24 +65,24 @@ export const action = async ({ request, context }: ActionFunctionArgs) => {
             }
         );
     }
-    const { email, name, password } = submission.value
+    const { email, firstname, password } = submission.value;
 
-    const { email: createdUserEmail } = await context.remixService.auth.createUser({
-        email,
-        name,
-        password,
-    });
+    const { email: createdUserEmail } =
+        await context.remixService.auth.createUser({
+            email,
+            name: firstname,
+            password,
+        });
 
     const { sessionToken } = await context.remixService.auth.authenticateUser({
-        email: createdUserEmail
-    })
+        email: createdUserEmail,
+    });
 
     // Connecter l'utilisateur associé à l'email
-    return redirect(`/authenticate?token=${sessionToken}`)
+    return redirect(`/authenticate?token=${sessionToken}`);
 };
 
 export default function Register() {
-
     const actionData = useActionData<typeof action>();
     const [form, fields] = useForm({
         constraint: getZodConstraint(RegisterSchema),
@@ -88,23 +91,27 @@ export default function Register() {
                 schema: RegisterSchema,
             });
         },
-        lastResult: actionData?.result
+        lastResult: actionData?.result,
     });
 
     const isLoading = useNavigation().state === 'submitting';
     return (
         <div className='max-w-[600px] mx-auto'>
             <h1>Création de compte</h1>
-            <Form  {...getFormProps(form)} method='POST' reloadDocument className='flex flex-col gap-2'>
-
+            <Form
+                {...getFormProps(form)}
+                method='POST'
+                reloadDocument
+                className='flex flex-col gap-2'
+            >
                 <Field
-                    inputProps={getInputProps(fields.name, {
+                    inputProps={getInputProps(fields.firstname, {
                         type: 'text',
                     })}
                     labelsProps={{
                         children: 'Votre prénom',
                     }}
-                    errors={fields.name.errors}
+                    errors={fields.firstname.errors}
                 />
 
                 <Field
