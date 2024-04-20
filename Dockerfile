@@ -58,6 +58,7 @@ COPY --chown=remix-api:nodejs --from=installer /app/node_modules ./node_modules
 COPY --chown=remix-api:nodejs --from=installer /app/node_modules/@virgile/frontend ./node_modules/@virgile/frontend
 COPY --chown=remix-api:nodejs --from=installer /app/node_modules/@virgile/typescript-config ./node_modules/@virgile/typescript-config
 COPY --chown=remix-api:nodejs --from=installer /app/node_modules/@virgile/eslint-config ./node_modules/@virgile/eslint-config
+COPY --chown=remix-api:nodejs --from=installer /app/backend/prisma ./backend/prisma
 
 COPY --chown=remix-api:nodejs --from=builder /app/backend/start.sh ./backend/start.sh
 
