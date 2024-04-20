@@ -2,8 +2,10 @@
 
 Retrouvez le guide vidéo pour configurer ce projet sur YouTube (en français)
 
-- [Partie 1 : Configurer Remix, NestJS et Turborepo](https://youtu.be/yv96ar6XNnU)
-- [Partie 2 : CI/CD, Déploiement avec Github Actions et Docker](https://youtu.be/KCMFcHTYf9o)
+- [Partie 1 : Configurer Remix, NestJS et Turborepo](https://www.youtube.com/watch?v=yv96ar6XNnU&list=PL2TfCPpDwZVTQr3Ox9KT0Ex2D-QajUyhM&index=1)
+- [Partie 2 : CI/CD, Déploiement avec Github Actions et Docker](https://www.youtube.com/watch?v=KCMFcHTYf9o&list=PL2TfCPpDwZVTQr3Ox9KT0Ex2D-QajUyhM&index=2)
+- [Partie 3: Intégration Design System | Figma, Tailwind CSS & Shadcn UI](https://www.youtube.com/watch?v=GWfZewdFx4o&list=PL2TfCPpDwZVTQr3Ox9KT0Ex2D-QajUyhM&index=3)
+- [Partie 4: Authentification avec Redis, express-session, Passport](https://youtu.be/SyuXRIbECEY?list=PL2TfCPpDwZVTQr3Ox9KT0Ex2D-QajUyhM)
 
 ### Motivation
 
