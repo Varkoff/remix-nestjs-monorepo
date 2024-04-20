@@ -117,6 +117,7 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' }}
         env:
           NODE_ENV: production
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           docker pull varkoff/nestjs-remix-monorepo:production
           docker compose -f docker-compose.prod.yml up -d
