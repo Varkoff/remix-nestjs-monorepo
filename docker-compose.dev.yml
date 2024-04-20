@@ -2,7 +2,7 @@ services:
   monorepo_dev:
     environment:
       - REDIS_URL=redis://redis_dev:6379
-      - NODE_ENV
+      - NODE_ENV=development
       - DATABASE_URL
 
     container_name: nestjs-remix-monorepo-dev
