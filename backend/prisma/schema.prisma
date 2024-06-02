@@ -14,21 +14,68 @@ datasource db {
 }
 
 model User {
-  id       String   @id @default(cuid())
+  id        String   @id @default(cuid())
   email     String   @unique
   name      String?
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  sessions Session[]
+  sessions     Session[]
+  offers       Offer[]
+  transactions Transaction[]
+  Message      Message[]
 }
 
 model Session {
-  id       String   @id @default(cuid())
-  userId   String
-  user     User     @relation(fields: [userId], references: [id])
+  id           String  @id @default(cuid())
+  userId       String
+  user         User    @relation(fields: [userId], references: [id])
   ipAddress    String?
   userAgent    String?
-  sessionToken String   @unique
+  sessionToken String  @unique
+}
+
+model Offer {
+  id          String   @id @default(cuid())
+  title       String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  description String
+  price       Float
+  active      Boolean  @default(false) // Est-ce que l'offre est visible sur le site ?
+  recurring   Boolean  @default(false) // Exemple : Si l'utilisateur vend un objet,
+  //  il ne peut vendre cet objet qu'une seule fois.
+  // Par conre, s'il rend un service, il peut le rendre plusieurs fois. Dans ce cas, l'application ne va pas supprimer l'offre après la première vente.
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+
+  transactions Transaction[]
+}
+
+model Transaction {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  offerId   String
+  offer     Offer    @relation(fields: [offerId], references: [id])
+
+  userId   String
+  user     User      @relation(fields: [userId], references: [id])
+  messages Message[]
+
+  @@unique([offerId, userId])
+}
+
+model Message {
+  id            String      @id @default(cuid())
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  content       String
+  userId        String
+  user          User        @relation(fields: [userId], references: [id])
+  transactionId String
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+  price        Float?
+  status Int?  @default(0) // 0 = message, 10 = offre en attente, 20 = offre acceptée, 90 = offre refusée
 }

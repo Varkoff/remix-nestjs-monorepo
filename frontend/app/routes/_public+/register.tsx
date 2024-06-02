@@ -108,7 +108,7 @@ export default function Register() {
                     inputProps={getInputProps(fields.firstname, {
                         type: 'text',
                     })}
-                    labelsProps={{
+                    labelProps={{
                         children: 'Votre prénom',
                     }}
                     errors={fields.firstname.errors}
@@ -118,7 +118,7 @@ export default function Register() {
                     inputProps={getInputProps(fields.email, {
                         type: 'email',
                     })}
-                    labelsProps={{
+                    labelProps={{
                         children: 'Adresse e-email',
                     }}
                     errors={fields.email.errors}
@@ -128,7 +128,7 @@ export default function Register() {
                     inputProps={getInputProps(fields.password, {
                         type: 'password',
                     })}
-                    labelsProps={{
+                    labelProps={{
                         children: 'Mot de passe',
                     }}
                     errors={fields.password.errors}

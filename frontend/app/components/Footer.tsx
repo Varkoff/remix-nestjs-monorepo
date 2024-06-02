@@ -5,7 +5,7 @@ export const Footer = () => {
     return (<footer className='overflow-x-auto px-3 py-2 flex items-center justify-between gap-4 mt-auto bg-lightTurquoise'>
         <FooterLinkItem href='/' icon={<Search />} label='Rechercher' />
         <FooterLinkItem href='/' icon={<Users />} label='Offreurs' />
-        <FooterLinkItem href='/home' icon={<Plus />} label='Demandes' />
+        <FooterLinkItem href='/' icon={<Plus />} label='Demandes' />
         <FooterLinkItem href='/' icon={<Star />} label='Favoris' />
         <FooterLinkItem href='/' icon={<Mail />} label='Message' />
     </footer>)

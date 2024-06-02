@@ -24,7 +24,7 @@ export class LocalAuthGuard extends AuthGuard('local') {
 
     // @ts-expect-error Fix that later
     handleRequest(err, user, info) {
-        console.log({ user, err, info })
+        // console.log({ user, err, info })
         // You can throw an exception based on either "info" or "err" arguments
         if (err || !user) {
             throw err || new UnauthorizedException("Vous n'avez pas le droit d'accéder à cette page.");

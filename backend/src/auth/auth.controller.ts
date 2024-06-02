@@ -1,4 +1,4 @@
-import { Controller, Get, Next, Post, Redirect, Req, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Next, Post, Query, Redirect, Req, Res, UseGuards } from '@nestjs/common';
 import { NextFunction, Response } from 'express';
 import { LocalAuthGuard } from './local-auth.guard';
 
@@ -7,7 +7,12 @@ export class AuthController {
     @UseGuards(LocalAuthGuard)
     @Get('/authenticate')
     @Redirect('/')
-    login() {
+    login(
+        @Query('redirectTo') redirectTo: string,
+    ) {
+        return {
+            url: redirectTo
+        }
     }
 
     @Post('auth/logout')

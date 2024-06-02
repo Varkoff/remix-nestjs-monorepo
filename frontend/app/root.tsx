@@ -35,6 +35,15 @@ export const useOptionalUser = () => {
 	return data.user
 }
 
+export const useUser = () => {
+	const user = useOptionalUser()
+	if (!user) {
+		// return null;
+		throw new Error("L'utilisateur n'est pas connecté")
+	}
+	return user
+}
+
 
 declare module '@remix-run/node' {
 	interface AppLoadContext {
