@@ -52,7 +52,7 @@ export class AuthService {
       }
     }
     return {
-      message: "L'utilisateur existe.",
+      message: "Cet email est déjà utilisé.",
       error: false,
     };
   };

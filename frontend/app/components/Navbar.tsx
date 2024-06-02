@@ -9,21 +9,24 @@ export const Navbar = ({ logo }: { logo: string }) => {
             <Link to='/'>
                 <img src={logo} className='w-full h-auto max-w-[120px]' />
             </Link>
-            <div className='flex gap-2'>
+            <div className='flex gap-2 items-center'>
                 {user ? (
                     <>
-                        <span>{user.name}</span>
-                        <Link to='/'>
+                        <span className='text-xs'>{user.name}</span>
+                        <Link className='text-xs' to='/transactions'>
+                            Demandes
+                        </Link>
+                        <Link className='text-xs' to='/my-services'>
                             <ReceiptEuro className='flex-shrink-0' />
                         </Link>
-                        <Link to='/'>
+                        <Link className='text-xs' to='/'>
                             <Bell className='fill-white flex-shrink-0' />
                         </Link>
-                        <Link to='/profile'>
+                        <Link className='text-xs' to='/profile'>
                             <UserRound className='flex-shrink-0' />
                         </Link>
                         <form method='POST' action='/auth/logout'>
-                            <button type='submit'>Se déconnecter</button>
+                            <button type='submit' className='text-xs'>Se déconnecter</button>
                         </form>
                     </>
                 ) : (

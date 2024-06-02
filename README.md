@@ -7,6 +7,7 @@ Retrouvez le guide vidéo pour configurer ce projet sur YouTube (en français)
 - [Partie 3: Intégration Design System | Figma, Tailwind CSS & Shadcn UI](https://www.youtube.com/watch?v=GWfZewdFx4o&list=PL2TfCPpDwZVTQr3Ox9KT0Ex2D-QajUyhM&index=3)
 - [Partie 4: Authentification avec Redis, express-session, Passport.js](https://youtu.be/SyuXRIbECEY?list=PL2TfCPpDwZVTQr3Ox9KT0Ex2D-QajUyhM)
 - [Partie 5: Authentification par token, inscription avec Redis, express-session, Passport.js](https://youtu.be/k6KrmuVgvec)
+- [Partie 6: Développement des fonctionnalités principales d'échange de service, faire une offre, éditer le profil ...](https://youtu.be/0C4Xh1x7flY)
 
 ### Motivation
 

@@ -1,0 +1,64 @@
+{
+    "$schema": "https://biomejs.dev/schemas/1.7.1/schema.json",
+    "organizeImports": {
+      "enabled": true
+    },
+    "files": {
+      "ignore": ["**/*.json"]
+    },
+  
+    "formatter": {
+      "enabled": true,
+      "indentStyle": "space",
+      "indentWidth": 2
+    },
+    "javascript": {
+      "parser": {
+        "unsafeParameterDecoratorsEnabled": true
+      }
+    },
+    "linter": {
+      "enabled": true,
+      "rules": {
+        "recommended": true,
+        "correctness": {
+          "noUnusedImports": "error",
+          "noUnusedVariables": "error",
+          "useExhaustiveDependencies": "off",
+          "noUnsafeOptionalChaining": "off"
+        },
+        "style": {
+          "noUnusedTemplateLiteral": "off",
+          "useTemplate": "off",
+          "useSelfClosingElements": "off",
+          "noParameterAssign": "off",
+          "noUselessElse": "off",
+          "useImportType": "off"
+        },
+        "security": {
+          "noDangerouslySetInnerHtml": "off"
+        },
+        "a11y": {
+          "useButtonType": "off",
+          "noSvgWithoutTitle": "off",
+          "noAutofocus": "off"
+        },
+        "complexity": {
+          "noUselessFragments": "off",
+          "useLiteralKeys": "off",
+          "noForEach": "off",
+          "useOptionalChain": "off"
+        },
+        "suspicious": {
+          "noArrayIndexKey": "off",
+          "noExplicitAny": "off",
+          "noMisleadingCharacterClass": "off",
+          "noAssignInExpressions": "off",
+          "noShadowRestrictedNames": "off",
+          "noGlobalIsNan": "off",
+          "useDefaultSwitchClauseLast": "off"
+        }
+      }
+    }
+  }
+  

@@ -8,7 +8,7 @@ import { Button } from '~/components/ui/button';
 import { getOptionalUser } from "~/server/auth.server";
 
 
-export const loader = async ({ request, context }: LoaderFunctionArgs) => {
+export const loader = async ({ context }: LoaderFunctionArgs) => {
     const user = await getOptionalUser({ context })
     if (user) {
         return redirect('/')
@@ -56,8 +56,10 @@ export const action = async ({ request, context }: ActionFunctionArgs) => {
         email,
     });
 
+    const urlParams = new URL(request.url).searchParams
+    const redirectTo = urlParams.get('redirectTo') || '/';
     // Connecter l'utilisateur associé à l'email
-    return redirect(`/authenticate?token=${sessionToken}`);
+    return redirect(`/authenticate?token=${sessionToken}&redirectTo=${redirectTo}`);
 };
 
 const LoginSchema = z.object({
@@ -96,7 +98,7 @@ export default function Login() {
                     inputProps={getInputProps(fields.email, {
                         type: 'email',
                     })}
-                    labelsProps={{
+                    labelProps={{
                         children: 'Adresse e-email',
                     }}
                     errors={fields.email.errors}
@@ -106,7 +108,7 @@ export default function Login() {
                     inputProps={getInputProps(fields.password, {
                         type: 'password',
                     })}
-                    labelsProps={{
+                    labelProps={{
                         children: 'Mot de passe',
                     }}
                     errors={fields.password.errors}
