@@ -24,5 +24,8 @@
 	],
 	"devDependencies": {
 		"turbo": "^1.13.0"
+	},
+	"dependencies": {
+		"@prisma/extension-optimize": "^1.0.1"
 	}
 }

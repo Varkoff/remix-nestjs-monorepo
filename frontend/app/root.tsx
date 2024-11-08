@@ -1,4 +1,4 @@
-import { json, type LinksFunction, type LoaderFunctionArgs } from "@remix-run/node";
+import { type LinksFunction, type LoaderFunctionArgs, json } from "@remix-run/node";
 import {
 	Links,
 	Meta,
@@ -21,6 +21,7 @@ export const links: LinksFunction = () => [
 
 export const loader = async ({ request, context }: LoaderFunctionArgs) => {
 	const user = await getOptionalUser({ context })
+	// await context.remixService.prisma.user.findMany()
 	return json({
 		user
 	});

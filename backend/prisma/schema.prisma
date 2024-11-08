@@ -5,7 +5,8 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["tracing"]
 }
 
 datasource db {
@@ -76,6 +77,6 @@ model Message {
   user          User        @relation(fields: [userId], references: [id])
   transactionId String
   transaction   Transaction @relation(fields: [transactionId], references: [id])
-  price        Float?
-  status Int?  @default(0) // 0 = message, 10 = offre en attente, 20 = offre acceptée, 90 = offre refusée
+  price         Float?
+  status        Int?        @default(0) // 0 = message, 10 = offre en attente, 20 = offre acceptée, 90 = offre refusée
 }

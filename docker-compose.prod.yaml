@@ -1,0 +1,26 @@
+services:
+  monorepo_prod:
+    environment:
+      - REDIS_URL=redis://redis_prod:6379
+      - NODE_ENV
+      - DATABASE_URL
+
+
+    container_name: nestjs-remix-monorepo-prod
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    image: varkoff/nestjs-remix-monorepo:production
+    restart: always
+    ports:
+      - 3000:3000
+  redis_prod:
+    image: redis:latest
+    restart: always
+    # ports:
+    #   - '6379:6379'
+    command: ["redis-server"] 
+    # --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    volumes: 
+      - /dev/volumes/nestjs-remix/production/sessions/:/data
+
