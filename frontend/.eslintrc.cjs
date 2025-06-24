@@ -18,6 +18,9 @@ module.exports = {
 			},
 		},
 	},
+	rules: {
+		"import/no-unresolved": "off",
+	},
 
 	overrides: [
 		{
@@ -35,6 +38,7 @@ module.exports = {
 					version: 28,
 				},
 			},
+
 		},
 	],
 };

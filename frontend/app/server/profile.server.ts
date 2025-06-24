@@ -35,11 +35,24 @@ export const createOffer = async ({
     offerData: z.infer<typeof CreateOfferSchema>;
     userId: string;
 }) => {
+    let imageFileKey : string | null = null;
+    if (offerData.image) {
+        const { fileKey } = await context.remixService.aws.uploadFile({
+            file: {
+                size: offerData.image.size,
+                mimetype: offerData.image.type,
+                originalname: offerData.image.name,
+                buffer: Buffer.from(await offerData.image.arrayBuffer()),
+            },
+        })
+        imageFileKey = fileKey;
+    }
     return await context.remixService.prisma.offer.create({
         data: {
             title: offerData.title,
             description: offerData.description,
             price: offerData.price,
+            ...(imageFileKey && { imageFileKey }),
             user: {
                 connect: {
                     id: userId,
@@ -57,7 +70,7 @@ export const getUserOffer = async ({
     context,
     offerId,
 }: { context: AppLoadContext; userId: string; offerId: string }) => {
-    return await context.remixService.prisma.offer.findUnique({
+    const offer = await context.remixService.prisma.offer.findUnique({
         select: {
             id: true,
             title: true,
@@ -66,12 +79,21 @@ export const getUserOffer = async ({
             updatedAt: true,
             active: true,
             recurring: true,
+            imageFileKey: true,
         },
         where: {
             id: offerId,
             userId,
         },
     });
+    let imageUrl = "";
+    if (offer?.imageFileKey) {
+        imageUrl = await context.remixService.aws.getFileUrl({fileKey: offer.imageFileKey})
+    }
+    return {
+        ...offer,
+        imageUrl,
+    }
 };
 
 export const editOffer = async ({
@@ -85,6 +107,18 @@ export const editOffer = async ({
     userId: string;
     offerId: string;
 }) => {
+    let imageFileKey : string | null = null;
+    if (offerData.image) {
+        const { fileKey } = await context.remixService.aws.uploadFile({
+            file: {
+                size: offerData.image.size,
+                mimetype: offerData.image.type,
+                originalname: offerData.image.name, 
+                buffer: Buffer.from(await offerData.image.arrayBuffer()),
+            },
+        })
+        imageFileKey = fileKey;
+    }
     return await context.remixService.prisma.offer.update({
         where: {
             id: offerId,
@@ -94,6 +128,7 @@ export const editOffer = async ({
             title: offerData.title,
             description: offerData.description,
             price: offerData.price,
+            ...(imageFileKey && { imageFileKey }),
             user: {
                 connect: {
                     id: userId,
