@@ -27,12 +27,12 @@ export default function Index() {
 }
 
 const ServiceCard = ({ offer }: { offer: SerializeFrom<Awaited<ReturnType<typeof getOffers>>>[0] }) => {
-  const { updatedAt, description, price, title, userId } = offer;
+  const { updatedAt, description, imageUrl, price, title, userId } = offer;
   const user = useOptionalUser()
   const isOwner = user?.id === userId;
   return (
     <Link to={`/offers/${offer.id}`} className="max-w-[300px] w-full flex flex-col gap-1 border-4 border-black overflow-hidden hover:border-vert">
-      <img src="https://via.placeholder.com/150" alt="service" />
+      <img src={imageUrl ? imageUrl : "https://via.placeholder.com/150"} alt="service" className="w-full h-auto max-h-[160px] object-cover" />
       <div className="flex flex-col gap-2 px-2 pt-1 pb-2">
         <div className="flex justify-between items-center gap-1">
           <h2 className="font-bold">{title}</h2>

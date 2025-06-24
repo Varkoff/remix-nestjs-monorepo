@@ -14,12 +14,13 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String   @id @default(cuid())
+  email         String   @unique
+  name          String?
+  password      String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  avatarFileKey String?  @unique
 
   sessions     Session[]
   offers       Offer[]
@@ -37,18 +38,19 @@ model Session {
 }
 
 model Offer {
-  id          String   @id @default(cuid())
-  title       String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  description String
-  price       Float
-  active      Boolean  @default(false) // Est-ce que l'offre est visible sur le site ?
-  recurring   Boolean  @default(false) // Exemple : Si l'utilisateur vend un objet,
+  id           String   @id @default(cuid())
+  title        String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  description  String
+  price        Float
+  active       Boolean  @default(false) // Est-ce que l'offre est visible sur le site ?
+  recurring    Boolean  @default(false) // Exemple : Si l'utilisateur vend un objet,
   //  il ne peut vendre cet objet qu'une seule fois.
   // Par conre, s'il rend un service, il peut le rendre plusieurs fois. Dans ce cas, l'application ne va pas supprimer l'offre après la première vente.
-  userId      String
-  user        User     @relation(fields: [userId], references: [id])
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  imageFileKey String?  @unique
 
   transactions Transaction[]
 }
@@ -76,6 +78,6 @@ model Message {
   user          User        @relation(fields: [userId], references: [id])
   transactionId String
   transaction   Transaction @relation(fields: [transactionId], references: [id])
-  price        Float?
-  status Int?  @default(0) // 0 = message, 10 = offre en attente, 20 = offre acceptée, 90 = offre refusée
+  price         Float?
+  status        Int?        @default(0) // 0 = message, 10 = offre en attente, 20 = offre acceptée, 90 = offre refusée
 }
