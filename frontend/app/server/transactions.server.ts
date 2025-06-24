@@ -1,14 +1,8 @@
 import { type AppLoadContext } from "@remix-run/node";
 import { type z } from "zod";
-import { type OfferSchema } from "~/routes/_public+/transactions.$transactionId";
+import { type OfferSchema, TransactionMessageStatus } from "~/routes/_public+/transactions.$transactionId";
 
-// 0 = message, 10 = offre en attente, 20 = offre acceptée, 90 = offre refusée
-export enum TransactionMessageStatus {
-    MESSAGE = 0,
-    PENDING_OFFER = 10,
-    ACCEPTED_OFFER = 20,
-    REJECTED_OFFER = 90,
-}
+
 export const getTransactions = async ({
     context,
     userId,
