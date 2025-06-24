@@ -23,7 +23,7 @@ export class LocalAuthGuard extends AuthGuard('local') {
     }
 
     // @ts-expect-error Fix that later
-    handleRequest(err, user, info) {
+    handleRequest(err, user,) {
         // console.log({ user, err, info })
         // You can throw an exception based on either "info" or "err" arguments
         if (err || !user) {
