@@ -12,7 +12,7 @@ import { Footer } from './components/Footer';
 import { Navbar } from './components/Navbar';
 import stylesheet from './global.css?url';
 import logo from './routes/_assets/logo-coup-de-pouce-dark.png';
-import { getOptionalUser } from "./server/auth.server";
+import { getNotificationStats, getNotifications, getOptionalUser } from "./server/auth.server";
 
 export const links: LinksFunction = () => [
 	{ rel: 'stylesheet', href: stylesheet },
@@ -21,8 +21,18 @@ export const links: LinksFunction = () => [
 
 export const loader = async ({ request, context }: LoaderFunctionArgs) => {
 	const user = await getOptionalUser({ context })
+	let notificationStats: Awaited<ReturnType<typeof getNotificationStats>> | null = null;
+	let notifications: Awaited<ReturnType<typeof getNotifications>> | null = null;
+	
+	if (user) {
+		notificationStats = await getNotificationStats({ context, userId: user.id });
+		notifications = await getNotifications({ context, userId: user.id });
+	}
+	
 	return json({
-		user
+		user,
+		notificationStats,
+		notifications
 	});
 };
 
@@ -33,6 +43,22 @@ export const useOptionalUser = () => {
 		// throw new Error('Root Loader did not return anything')
 	}
 	return data.user
+}
+
+export const useNotificationStats = () => {
+	const data = useRouteLoaderData<typeof loader>("root")
+	if (!data) {
+		return null;
+	}
+	return data.notificationStats
+}
+
+export const useNotifications = () => {
+	const data = useRouteLoaderData<typeof loader>("root")
+	if (!data) {
+		return null;
+	}
+	return data.notifications
 }
 
 export const useUser = () => {

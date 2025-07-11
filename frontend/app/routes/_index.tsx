@@ -1,53 +1,104 @@
 import { json, type LoaderFunctionArgs, type SerializeFrom } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
-import { User } from "lucide-react";
 import { formatDate, formatPrice } from "~/lib/utils";
 import { useOptionalUser } from "~/root";
+import { getOptionalUser } from "~/server/auth.server";
 import { getOffers } from "~/server/offers.server";
 
 export const loader = async ({ context }: LoaderFunctionArgs) => {
-  const offers = await getOffers({ context });
+  const user = await getOptionalUser({ context });
+  const offers = await getOffers({ 
+    context, 
+    userId: user?.id 
+  });
   return json({ offers });
 };
 
 export default function Index() {
   const { offers } = useLoaderData<typeof loader>();
   return (
-    <div className="flex flex-col gap-3 py-8">
-      <article className="px-6 space-y-4">
-        <h2 className="text-3xl font-bold">Nouvelles annonces</h2>
-        <div className="flex flex-row flex-wrap gap-8">
-          {offers.map((offer) => (
-            <ServiceCard offer={offer} key={offer.id} />
-          ))}
+    <div className="min-h-screen bg-gradient-to-br from-extraLightTurquoise to-white">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* Header Section */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-bleu mb-2">Découvrez nos services</h1>
+          <p className="text-bleu/80 text-lg">
+            Explorez les dernières annonces et trouvez le service qui vous convient
+          </p>
         </div>
-      </article>
+
+        {/* Services Grid */}
+        {offers.length === 0 ? (
+          <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
+            <h2 className="text-xl font-bold text-bleu mb-2">Aucun service disponible</h2>
+            <p className="text-gray-600">
+              Revenez plus tard pour découvrir de nouveaux services
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+            {offers.map((offer) => (
+              <ServiceCard offer={offer} key={offer.id} />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
 
 const ServiceCard = ({ offer }: { offer: SerializeFrom<Awaited<ReturnType<typeof getOffers>>>[0] }) => {
-  const { updatedAt, description, imageUrl, price, title, userId } = offer;
+  const { updatedAt, description, imageUrl, price, title, userId, hasActiveTransaction } = offer;
   const user = useOptionalUser()
   const isOwner = user?.id === userId;
+  
   return (
-    <Link to={`/offers/${offer.id}`} className="max-w-[300px] w-full flex flex-col gap-1 border-4 border-black overflow-hidden hover:border-vert">
-      <img src={imageUrl ? imageUrl : "https://via.placeholder.com/150"} alt="service" className="w-full h-auto max-h-[160px] object-cover" />
-      <div className="flex flex-col gap-2 px-2 pt-1 pb-2">
-        <div className="flex justify-between items-center gap-1">
-          <h2 className="font-bold">{title}</h2>
-          {isOwner ? <User className="size-4 text-emerald-600" /> : null}
-          <p className="text-white rounded-full px-2 py-0.5 ml-auto bg-persianIndigo">
-            {formatPrice({ price: price })}
-          </p>
+    <Link 
+      to={`/offers/${offer.id}`} 
+      className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl"
+    >
+      {/* Image Section */}
+      <div className="relative">
+        <img 
+          src={imageUrl ? imageUrl : "https://via.placeholder.com/250x150"} 
+          alt={title}
+          className="w-full h-32 object-cover" 
+        />
+        {isOwner && (
+          <div className="absolute top-2 right-2 bg-vert text-white px-2 py-1 rounded-md text-xs font-medium">
+            Votre offre
+          </div>
+        )}
+        {!isOwner && hasActiveTransaction && (
+          <div className="absolute top-2 right-2 bg-bleu text-white px-2 py-1 rounded-md text-xs font-medium">
+            Conversation active
+          </div>
+        )}
+        {/* Price Badge */}
+        <div className="absolute bottom-2 left-2">
+          <div className="bg-persianIndigo/90 backdrop-blur-sm text-white px-2 py-1 rounded-md">
+            <span className="font-semibold text-xs">
+              {formatPrice({ price: price })}
+            </span>
+          </div>
         </div>
-        <p className="text-sm ">{description}</p>
-        <div className="flex justify-between gap-2">
-          {/* <p className="text-xs text-slate-600">{place}</p> */}
-          <p className="text-xs italic">
-            publié le{" "}
+      </div>
+
+      {/* Content Section */}
+      <div className="p-4">
+        <h3 className="font-bold text-base text-bleu mb-2 line-clamp-2">
+          {title}
+        </h3>
+        
+        <p className="text-gray-600 text-xs leading-relaxed mb-3 line-clamp-2">
+          {description}
+        </p>
+        
+        {/* Footer */}
+        <div className="pt-2 border-t border-gray-100">
+          <span className="text-xs text-gray-500">
             {formatDate({ date: updatedAt })}
-          </p>
+          </span>
         </div>
       </div>
     </Link>
