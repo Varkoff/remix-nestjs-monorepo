@@ -5,7 +5,7 @@ import {
     type LoaderFunctionArgs
 } from "@remix-run/node";
 import { Link, useLoaderData, useParams } from "@remix-run/react";
-import { Star } from "lucide-react";
+import { ArrowLeft, MessageCircle } from "lucide-react";
 import { z } from "zod";
 import { Chatbox } from "~/components/Chatbox";
 import { buttonVariants } from "~/components/ui/button";
@@ -164,41 +164,105 @@ export const action = async ({
 export default function TransactionDetail() {
     const data = useLoaderData<typeof loader>();
     return (
-        <div className="max-w-[600px] mx-auto flex flex-col gap-3">
-            <div className="flex flex-row flex-wrap gap-4">
-                <div className="flex text-xs flex-col items-center gap-1 rounded-sm bg-slate-50 w-fit px-3 py-2">
-                    <span className="text-xs font-semibold">{data.offer.user.name}</span>
-                    <img
-                        className="max-w-[80px] w-full h-auto rounded-full"
-                        src="https://thispersondoesnotexist.com/"
-                        alt="service"
-                    />
-                    <div className="flex flex-col gap-1 mt-2 text-xs">
-                        <span className="text-gray-400 font-normal">
-                            Actif il y a 30 minutes
-                        </span>
-                        <span className="text-gray-700">2 annonces actives</span>
-                        <div className="flex items-center gap-1">
-                            {Array.from({ length: 5 }, (_, index) => (
-                                <Star
-                                    className="size-3 fill-amber-400 stroke-amber-800"
-                                    key={index}
-                                />
-                            ))}
-                            <span className="text-[10px] text-gray-400">(27 avis)</span>
+        <div className="min-h-screen bg-gray-50">
+            <div className="max-w-4xl mx-auto px-4 py-4 sm:py-6">
+                {/* Header */}
+                <div className="flex items-center justify-between mb-4">
+                    <Link 
+                        to="/transactions" 
+                        className="inline-flex items-center gap-2 text-bleu hover:text-bleu/80 transition-colors"
+                    >
+                        <ArrowLeft className="size-4" />
+                        <span className="hidden sm:inline">Retour</span>
+                    </Link>
+                    <Link
+                        to={`/offers/${data.offer.id}`}
+                        className="inline-flex items-center gap-2 text-bleu hover:text-bleu/80 transition-colors text-sm"
+                    >
+                        Voir l'offre
+                        <ArrowLeft className="size-4 rotate-180" />
+                    </Link>
+                </div>
+
+                {/* Main Content */}
+                <div className="grid lg:grid-cols-4 gap-4">
+                    {/* Offer Info - Compact */}
+                    <div className="lg:col-span-1 order-2 lg:order-1">
+                        <div className="bg-white rounded-lg shadow-sm border p-4 space-y-4">
+                            {/* Provider */}
+                            <div className="flex items-center gap-3">
+                                {data.offer.user.avatarUrl ? (
+                                    <img
+                                        src={data.offer.user.avatarUrl}
+                                        alt={`Avatar de ${data.offer.user.name}`}
+                                        className="w-12 h-12 rounded-full object-cover"
+                                    />
+                                ) : (
+                                    <div className="w-12 h-12 bg-bleuClair rounded-full flex items-center justify-center">
+                                        <span className="text-bleu font-semibold text-sm">
+                                            {data.offer.user.name
+                                                ?.split(' ')
+                                                .map(word => word.charAt(0))
+                                                .join('')
+                                                .toUpperCase()
+                                                .slice(0, 2) || "?"}
+                                        </span>
+                                    </div>
+                                )}
+                                <div>
+                                    <h3 className="font-semibold text-bleu text-sm">
+                                        {data.offer.user.name}
+                                    </h3>
+                                    <p className="text-xs text-gray-500">Prestataire</p>
+                                </div>
+                            </div>
+
+                            {/* Offer Details */}
+                            <div className="pt-3 border-t border-gray-100">
+                                <h4 className="font-medium text-gray-900 text-sm mb-2">
+                                    {data.offer.title}
+                                </h4>
+                                <div className="text-lg font-bold text-persianIndigo mb-2">
+                                    {formatPrice({ price: data.offer.price })}
+                                </div>
+                                <p className="text-xs text-gray-600 line-clamp-3">
+                                    {data.offer.description}
+                                </p>
+                            </div>
+
+                            {/* Status */}
+                            <div className="pt-3 border-t border-gray-100">
+                                <div className="flex items-center gap-2 text-xs text-gray-600">
+                                    <div className="w-2 h-2 bg-vert rounded-full"></div>
+                                    <span>Transaction active</span>
+                                </div>
+                                <div className="flex items-center gap-2 text-xs text-gray-600 mt-1">
+                                    <MessageCircle className="size-3" />
+                                    <span>{data.messages.length} message{data.messages.length > 1 ? 's' : ''}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Chat Section */}
+                    <div className="lg:col-span-3 order-1 lg:order-2">
+                        <div className="bg-white rounded-lg shadow-sm border">
+                            {/* Chat Header */}
+                            <div className="p-4 border-b border-gray-100">
+                                <div className="flex items-center gap-2">
+                                    <MessageCircle className="size-5 text-bleu" />
+                                    <h2 className="font-semibold text-bleu">Conversation</h2>
+                                </div>
+                            </div>
+
+                            {/* Chat Content */}
+                            <div className="p-4">
+                                <Chatbox messages={data.messages} transaction={data} />
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div className="flex grow text-xs flex-col gap-1 rounded-sm bg-slate-50 w-fit px-3 py-2">
-                    <h2 className="text-lg font-bold">{data.offer.title}</h2>{" "}
-                    <span className="text-lg">
-                        {formatPrice({ price: data.offer.price })}
-                    </span>
-                    <p className="text-balance max-w-[70ch]">{data.offer.description}</p>
-                </div>
             </div>
-
-            <Chatbox messages={data.messages} />
         </div>
     );
 }
@@ -206,26 +270,29 @@ export default function TransactionDetail() {
 export const ErrorBoundary = () => {
     const { transactionId } = useParams();
     return (
-        <div className="flex flex-col gap-3 py-8">
-            <article className="px-6 space-y-4">
-                <h2 className="text-3xl font-bold">Transaction introuvable</h2>
-                <div className="flex flex-row flex-wrap gap-8">
-                    <p>
-                        Il semblerait que la transaction{" "}
-                        <span className="font-bold">{transactionId}</span>
-                        n'existe pas.
-                    </p>
+        <div className="min-h-screen bg-gradient-to-br from-extraLightTurquoise to-white flex items-center justify-center px-4">
+            <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
+                <div className="w-16 h-16 bg-khmerCurry/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-khmerCurry" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                    </svg>
                 </div>
-
+                <h2 className="text-2xl font-bold text-bleu mb-4">Transaction introuvable</h2>
+                <p className="text-gray-600 mb-6">
+                    Il semblerait que la transaction{" "}
+                    <span className="font-semibold text-bleu">{transactionId}</span>{" "}
+                    n'existe pas ou que vous n'y avez pas accès.
+                </p>
                 <Link
-                    to="/"
+                    to="/transactions"
                     className={buttonVariants({
                         variant: "primary",
+                        className: "w-full"
                     })}
                 >
-                    Liste de mes annonces
+                    Retour à mes transactions
                 </Link>
-            </article>
+            </div>
         </div>
     );
 };

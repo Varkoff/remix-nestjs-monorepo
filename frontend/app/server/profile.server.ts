@@ -7,7 +7,7 @@ export const getUserOffers = async ({
     userId,
     context,
 }: { context: AppLoadContext; userId: string }) => {
-    return await context.remixService.prisma.offer.findMany({
+    const offers = await context.remixService.prisma.offer.findMany({
         select: {
             id: true,
             title: true,
@@ -16,6 +16,7 @@ export const getUserOffers = async ({
             updatedAt: true,
             active: true,
             recurring: true,
+            imageFileKey: true,
         },
         where: {
             userId,
@@ -24,6 +25,24 @@ export const getUserOffers = async ({
             createdAt: "asc",
         },
     });
+
+    // Get image URLs for all offers
+    const offersWithImages = await Promise.all(
+        offers.map(async (offer) => {
+            let imageUrl = "";
+            if (offer.imageFileKey) {
+                imageUrl = await context.remixService.aws.getFileUrl({
+                    fileKey: offer.imageFileKey
+                });
+            }
+            return {
+                ...offer,
+                imageUrl,
+            };
+        })
+    );
+
+    return offersWithImages;
 };
 
 export const createOffer = async ({
@@ -142,7 +161,38 @@ export const editOffer = async ({
     });
 };
 
+export const getUserWithAvatar = async ({
+    userId,
+    context,
+}: { context: AppLoadContext; userId: string }) => {
+    const user = await context.remixService.prisma.user.findUnique({
+        select: {
+            id: true,
+            email: true,
+            name: true,
+            avatarFileKey: true,
+        },
+        where: {
+            id: userId,
+        },
+    });
 
+    if (!user) {
+        throw new Error("User not found");
+    }
+
+    let avatarUrl = "";
+    if (user.avatarFileKey) {
+        avatarUrl = await context.remixService.aws.getFileUrl({
+            fileKey: user.avatarFileKey
+        });
+    }
+
+    return {
+        ...user,
+        avatarUrl,
+    };
+};
 
 export const editProfile = async ({
     context,
@@ -153,6 +203,19 @@ export const editProfile = async ({
     profileData: z.infer<typeof EditProfileSchema>;
     userId: string;
 }) => {
+    let avatarFileKey: string | null = null;
+    if (profileData.avatar) {
+        const { fileKey } = await context.remixService.aws.uploadFile({
+            file: {
+                size: profileData.avatar.size,
+                mimetype: profileData.avatar.type,
+                originalname: profileData.avatar.name,
+                buffer: Buffer.from(await profileData.avatar.arrayBuffer()),
+            },
+        });
+        avatarFileKey = fileKey;
+    }
+
     return await context.remixService.prisma.user.update({
         where: {
             id: userId,
@@ -160,6 +223,7 @@ export const editProfile = async ({
         data: {
             email: profileData.email,
             name: profileData.name,
+            ...(avatarFileKey && { avatarFileKey }),
         },
         select: {
             id: true,

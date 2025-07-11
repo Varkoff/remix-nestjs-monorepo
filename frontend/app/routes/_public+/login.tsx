@@ -2,6 +2,7 @@ import { getFormProps, getInputProps, useForm } from '@conform-to/react';
 import { getZodConstraint, parseWithZod } from '@conform-to/zod';
 import { json, redirect, type ActionFunctionArgs, type LoaderFunctionArgs } from "@remix-run/node";
 import { Form, useActionData } from '@remix-run/react';
+import { LogIn } from "lucide-react";
 import { z } from 'zod';
 import { Field } from '~/components/forms';
 import { Button } from '~/components/ui/button';
@@ -84,40 +85,50 @@ export default function Login() {
         },
         lastResult: actionData?.result,
     });
+    
     return (
-        <div className='max-w-[600px] mx-auto'>
-            <h1>Connexion</h1>
-            <Form
-                {...getFormProps(form)}
-                method='POST'
-                // action='/auth/login'
-                reloadDocument
-                className='flex flex-col gap-4'
-            >
-                <Field
-                    inputProps={getInputProps(fields.email, {
-                        type: 'email',
-                    })}
-                    labelProps={{
-                        children: 'Adresse e-email',
-                    }}
-                    errors={fields.email.errors}
-                />
+        <div className="min-h-screen py-4">
+            <div className="max-w-md mx-auto px-4">
+                {/* Header */}
+                <div className="flex items-center gap-2 mb-4">
+                    <LogIn className="size-5 text-bleu" />
+                    <h1 className="text-xl font-bold text-bleu">Connexion</h1>
+                </div>
 
-                <Field
-                    inputProps={getInputProps(fields.password, {
-                        type: 'password',
-                    })}
-                    labelProps={{
-                        children: 'Mot de passe',
-                    }}
-                    errors={fields.password.errors}
-                />
+                {/* Login Form */}
+                <div className="bg-gray-50 rounded-lg shadow p-6 border border-gray-100">
+                    <Form
+                        {...getFormProps(form)}
+                        method='POST'
+                        reloadDocument
+                        className='flex flex-col gap-4'
+                    >
+                        <Field
+                            inputProps={getInputProps(fields.email, {
+                                type: 'email',
+                            })}
+                            labelProps={{
+                                children: 'Adresse e-mail',
+                            }}
+                            errors={fields.email.errors}
+                        />
 
-                <Button className='ml-auto' type='submit'>
-                    Se connecter
-                </Button>
-            </Form>
+                        <Field
+                            inputProps={getInputProps(fields.password, {
+                                type: 'password',
+                            })}
+                            labelProps={{
+                                children: 'Mot de passe',
+                            }}
+                            errors={fields.password.errors}
+                        />
+
+                        <Button className='ml-auto' type='submit'>
+                            Se connecter
+                        </Button>
+                    </Form>
+                </div>
+            </div>
         </div>
     );
 }

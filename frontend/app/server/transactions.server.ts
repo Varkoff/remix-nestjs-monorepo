@@ -33,16 +33,20 @@ export const getTransactions = async ({
                 select: {
                     name: true,
                     id: true,
+                    avatarFileKey: true,
                 },
             },
             offer: {
                 select: {
+                    id: true,
                     title: true,
                     price: true,
+                    imageFileKey: true,
                     user: {
                         select: {
                             name: true,
                             id: true,
+                            avatarFileKey: true,
                         },
                     },
                 },
@@ -50,10 +54,54 @@ export const getTransactions = async ({
         },
     });
 
-    const myRequestedTransactions = transactions.filter(
+    // Get image URLs for all offers and avatar URLs for all users
+    const transactionsWithImagesAndAvatars = await Promise.all(
+        transactions.map(async (transaction) => {
+            let imageUrl = "";
+            if (transaction.offer.imageFileKey) {
+                imageUrl = await context.remixService.aws.getFileUrl({
+                    fileKey: transaction.offer.imageFileKey
+                });
+            }
+
+            // Get avatar URL for transaction user
+            let transactionUserAvatarUrl = "";
+            if (transaction.user.avatarFileKey) {
+                transactionUserAvatarUrl = await context.remixService.aws.getFileUrl({
+                    fileKey: transaction.user.avatarFileKey
+                });
+            }
+
+            // Get avatar URL for offer user
+            let offerUserAvatarUrl = "";
+            if (transaction.offer.user.avatarFileKey) {
+                offerUserAvatarUrl = await context.remixService.aws.getFileUrl({
+                    fileKey: transaction.offer.user.avatarFileKey
+                });
+            }
+
+            return {
+                ...transaction,
+                user: {
+                    ...transaction.user,
+                    avatarUrl: transactionUserAvatarUrl,
+                },
+                offer: {
+                    ...transaction.offer,
+                    imageUrl,
+                    user: {
+                        ...transaction.offer.user,
+                        avatarUrl: offerUserAvatarUrl,
+                    },
+                },
+            };
+        })
+    );
+
+    const myRequestedTransactions = transactionsWithImagesAndAvatars.filter(
         (transaction) => transaction.user.id === userId,
     );
-    const myOfferedTransactions = transactions.filter(
+    const myOfferedTransactions = transactionsWithImagesAndAvatars.filter(
         (transaction) => transaction.offer.user.id === userId,
     );
     return { myRequestedTransactions, myOfferedTransactions };
@@ -74,6 +122,7 @@ export const getTransaction = async ({
                 select: {
                     name: true,
                     id: true,
+                    avatarFileKey: true,
                 },
             },
             messages: {
@@ -85,6 +134,7 @@ export const getTransaction = async ({
                     user: {
                         select: {
                             name: true,
+                            avatarFileKey: true,
                         },
                     },
                     price: true,
@@ -96,6 +146,7 @@ export const getTransaction = async ({
             },
             offer: {
                 select: {
+                    id: true,
                     title: true,
                     price: true,
                     description: true,
@@ -103,6 +154,7 @@ export const getTransaction = async ({
                         select: {
                             name: true,
                             id: true,
+                            avatarFileKey: true,
                         },
                     },
                 },
@@ -118,7 +170,56 @@ export const getTransaction = async ({
         throw new Error("Vous n'êtes pas autorisé à voir cette transaction");
     }
 
-    return transaction;
+    // Generate avatar URLs for all users
+    const messagesWithAvatars = await Promise.all(
+        transaction.messages.map(async (message) => {
+            let avatarUrl = "";
+            if (message.user.avatarFileKey) {
+                avatarUrl = await context.remixService.aws.getFileUrl({
+                    fileKey: message.user.avatarFileKey
+                });
+            }
+            return {
+                ...message,
+                user: {
+                    ...message.user,
+                    avatarUrl,
+                },
+            };
+        })
+    );
+
+    // Generate avatar URL for transaction user
+    let transactionUserAvatarUrl = "";
+    if (transaction.user.avatarFileKey) {
+        transactionUserAvatarUrl = await context.remixService.aws.getFileUrl({
+            fileKey: transaction.user.avatarFileKey
+        });
+    }
+
+    // Generate avatar URL for offer user
+    let offerUserAvatarUrl = "";
+    if (transaction.offer.user.avatarFileKey) {
+        offerUserAvatarUrl = await context.remixService.aws.getFileUrl({
+            fileKey: transaction.offer.user.avatarFileKey
+        });
+    }
+
+    return {
+        ...transaction,
+        messages: messagesWithAvatars,
+        user: {
+            ...transaction.user,
+            avatarUrl: transactionUserAvatarUrl,
+        },
+        offer: {
+            ...transaction.offer,
+            user: {
+                ...transaction.offer.user,
+                avatarUrl: offerUserAvatarUrl,
+            },
+        },
+    };
 };
 
 export const createTransaction = async ({
@@ -269,3 +370,4 @@ export const declineTransactionOffer = async ({
         },
     });
 };
+
