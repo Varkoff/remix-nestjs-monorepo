@@ -37,7 +37,7 @@ export const loader = async ({ params, context }: LoaderFunctionArgs) => {
     // Check if user is logged in and has existing transaction
     const user = await getOptionalUser({ context });
     let existingTransaction: Awaited<ReturnType<typeof getExistingTransaction>> | null = null;
-    
+
     if (user) {
         existingTransaction = await getExistingTransaction({
             offerId,
@@ -46,9 +46,9 @@ export const loader = async ({ params, context }: LoaderFunctionArgs) => {
         });
     }
 
-    return json({ 
-        offer: foundOffer, 
-        existingTransaction 
+    return json({
+        offer: foundOffer,
+        existingTransaction
     });
 };
 
@@ -153,13 +153,13 @@ export default function OfferPage() {
 
     const user = useOptionalUser();
     const isOwner = user?.id === offer.userId;
-    
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-extraLightTurquoise to-white">
             <div className="max-w-4xl mx-auto px-4 py-8">
                 {/* Back Button */}
-                <Link 
-                    to="/" 
+                <Link
+                    to="/"
                     className="inline-flex items-center gap-2 text-bleu hover:text-bleu/80 transition-colors mb-6"
                 >
                     <ArrowLeft className="size-4" />
@@ -173,18 +173,18 @@ export default function OfferPage() {
                         <div className="h-64 bg-gradient-to-r from-bleuClair to-lightTurquoise flex items-center justify-center">
                             <img
                                 className="max-w-full max-h-full object-cover rounded-lg shadow-lg"
-                                src={offer.imageUrl}
+                                src={offer.imageUrl ? offer.imageUrl : "https://placehold.co/1200x400?text=Pas%20d%27image"}
                                 alt={offer.title}
                             />
                         </div>
-                        
+
                         {/* Price Badge */}
                         <div className="absolute top-4 right-4">
                             <div className="bg-persianIndigo text-white px-4 py-2 rounded-full font-semibold text-lg shadow-lg">
                                 {formatPrice({ price: offer.price ?? 0 })}
                             </div>
                         </div>
-                        
+
                         {/* Owner Badge */}
                         {isOwner && (
                             <div className="absolute top-4 left-4">
@@ -227,8 +227,8 @@ export default function OfferPage() {
                                     <div className="text-center">
                                         <div className="w-16 h-16 bg-bleuClair rounded-full flex items-center justify-center mx-auto mb-3 overflow-hidden">
                                             {offer.user.avatarUrl ? (
-                                                <img 
-                                                    src={offer.user.avatarUrl} 
+                                                <img
+                                                    src={offer.user.avatarUrl}
                                                     alt={offer.user.name || "Prestataire"}
                                                     className="w-full h-full object-cover"
                                                 />
@@ -245,11 +245,11 @@ export default function OfferPage() {
                                     <div className="space-y-4">
                                         {isOwner ? (
                                             <div className="space-y-3">
-                                                <Link 
+                                                <Link
                                                     className={buttonVariants({
                                                         variant: 'primary',
                                                         className: 'w-full'
-                                                    })} 
+                                                    })}
                                                     to={`/my-services/${offer.id}`}
                                                 >
                                                     Modifier mon offre
@@ -260,11 +260,11 @@ export default function OfferPage() {
                                             </div>
                                         ) : existingTransaction ? (
                                             <div className="space-y-3">
-                                                <Link 
+                                                <Link
                                                     className={buttonVariants({
                                                         variant: 'primary',
                                                         className: 'w-full py-3 text-lg font-semibold bg-gradient-to-r from-bleu to-persianIndigo hover:from-bleu/90 hover:to-persianIndigo/90 shadow-lg hover:shadow-xl transition-all duration-200'
-                                                    })} 
+                                                    })}
                                                     to={`/transactions/${existingTransaction.id}`}
                                                 >
                                                     Voir ma conversation

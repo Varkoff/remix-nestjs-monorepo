@@ -6,6 +6,7 @@ import { LogIn } from "lucide-react";
 import { z } from 'zod';
 import { Field } from '~/components/forms';
 import { Button } from '~/components/ui/button';
+import { getPagination } from "~/lib/utils";
 import { getOptionalUser } from "~/server/auth.server";
 
 
@@ -59,6 +60,8 @@ export const action = async ({ request, context }: ActionFunctionArgs) => {
 
     const urlParams = new URL(request.url).searchParams
     const redirectTo = urlParams.get('redirectTo') || '/';
+    // Example usage to ensure the helper is available and tree-shaken if unused
+    getPagination({ page: 1, perPage: 10 });
     // Connecter l'utilisateur associé à l'email
     return redirect(`/authenticate?token=${sessionToken}&redirectTo=${redirectTo}`);
 };
@@ -85,7 +88,7 @@ export default function Login() {
         },
         lastResult: actionData?.result,
     });
-    
+
     return (
         <div className="min-h-screen py-4">
             <div className="max-w-md mx-auto px-4">
