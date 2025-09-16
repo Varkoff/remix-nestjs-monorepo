@@ -15,9 +15,11 @@
     "prebuild": "rimraf dist tsconfig.tsbuildinfo",
     "build": "tsc --build",
     "prisma:prestart": "prisma generate",
+    "prisma:generate": "prisma generate",
     "start": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "seed:offers": "npm run prisma:generate && ts-node --transpile-only src/scripts/seed-offers.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.835.0",

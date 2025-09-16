@@ -9,6 +9,7 @@ Retrouvez le guide vidéo pour configurer ce projet sur YouTube (en français)
 - [Partie 5: Authentification par token, inscription avec Redis, express-session, Passport.js](https://youtu.be/k6KrmuVgvec)
 - [Partie 6: Développement des fonctionnalités principales d'échange de service, faire une offre, éditer le profil ...](https://youtu.be/0C4Xh1x7flY)
 - [Partie 7: Intégrer Amazon S3 pour héberger les fichiers des utilisateurs](https://youtu.be/4_Q8dsj-X9k)
+- [Partie 8: J'ai redesigné ce SaaS avec l'IA | Formation Remix, NestJS, Shadcn UI 2024](https://www.youtube.com/watch?v=ZxYvbvF1dDA)
 
 ### Motivation
 
