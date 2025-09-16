@@ -123,6 +123,8 @@ export const getOffer = async ({
       updatedAt: true,
       userId: true,
       imageFileKey: true,
+      stripeProductId: true,
+      stripePriceId: true,
       user: {
         select: {
           id: true,
@@ -154,6 +156,7 @@ export const getOffer = async ({
   return {
     ...offer,
     imageUrl,
+    isStripeSynced: Boolean(offer.stripeProductId && offer.stripePriceId),
     user: {
       ...offer.user,
       avatarUrl: userAvatarUrl,

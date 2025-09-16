@@ -22,10 +22,10 @@ export const loader = async ({ context }: LoaderFunctionArgs) => {
 
 export default function MyServices() {
     const { offers, user } = useLoaderData<typeof loader>();
-    
+
     const activeOffers = offers.filter(offer => offer.active);
     const inactiveOffers = offers.filter(offer => !offer.active);
-    
+
     return (
         <div className="bg-gradient-to-br from-extraLightTurquoise to-white min-h-screen">
             <div className="max-w-7xl mx-auto px-4 py-4">
@@ -35,8 +35,8 @@ export default function MyServices() {
                         <Settings className="size-5 text-bleu" />
                         <h1 className="text-xl font-bold text-bleu">Mes services</h1>
                     </div>
-                    <Link 
-                        to="/my-services/new" 
+                    <Link
+                        to="/my-services/new"
                         className="bg-bleu text-white px-3 py-1.5 rounded text-sm font-medium hover:bg-bleu/90 flex items-center gap-1"
                     >
                         <Plus className="size-4" />
@@ -49,8 +49,8 @@ export default function MyServices() {
                         <Settings className="size-12 text-gray-400 mx-auto mb-3" />
                         <h2 className="text-lg font-bold text-gray-900 mb-2">Aucun service</h2>
                         <p className="text-sm text-gray-600 mb-4">Créez votre première offre de service</p>
-                        <Link 
-                            to="/my-services/new" 
+                        <Link
+                            to="/my-services/new"
                             className="bg-bleu text-white px-4 py-2 rounded text-sm font-medium hover:bg-bleu/90 inline-flex items-center gap-1"
                         >
                             <Plus className="size-4" />
@@ -71,7 +71,7 @@ export default function MyServices() {
                                         <Eye className="size-4 text-bleu" />
                                     </div>
                                 </div>
-                                
+
                                 <div className="p-3">
                                     <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3">
                                         {activeOffers.map((offer) => (
@@ -94,7 +94,7 @@ export default function MyServices() {
                                         <EyeOff className="size-4 text-gray-600" />
                                     </div>
                                 </div>
-                                
+
                                 <div className="p-3">
                                     <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3">
                                         {inactiveOffers.map((offer) => (
@@ -111,18 +111,18 @@ export default function MyServices() {
     );
 }
 
-const ServiceCard = ({ 
-    offer, 
-    user 
-}: { 
+const ServiceCard = ({
+    offer,
+    user
+}: {
     offer: SerializeFrom<Awaited<ReturnType<typeof getUserOffers>>>[0];
     user: SerializeFrom<Awaited<ReturnType<typeof getUserWithAvatar>>>;
 }) => {
     const { updatedAt, description, price, title, active, imageUrl } = offer;
-    
+
     return (
-        <Link 
-            to={`/my-services/${offer.id}`} 
+        <Link
+            to={`/my-services/${offer.id}`}
             className="group flex items-center gap-3 p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors border border-gray-200 w-full sm:basis-[320px] sm:grow sm:shrink-0"
         >
             {/* Service Image and User Avatar */}
@@ -165,7 +165,7 @@ const ServiceCard = ({
                     </div>
                 </div>
             </div>
-            
+
             {/* Content */}
             <div className="flex-1 min-w-0">
                 <h3 className="font-medium text-sm text-gray-900 truncate group-hover:text-bleu transition-colors">
@@ -175,7 +175,12 @@ const ServiceCard = ({
                     <span className="text-xs font-medium text-persianIndigo">
                         {formatPrice({ price })}
                     </span>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-2">
+                        {offer.isStripeSynced ? (
+                            <span className="text-[10px] text-emerald-600">Stripe OK</span>
+                        ) : (
+                            <span className="text-[10px] text-red-600">Stripe à synchroniser</span>
+                        )}
                         <div className={`w-1.5 h-1.5 rounded-full ${active ? 'bg-emerald-500' : 'bg-gray-400'}`}></div>
                         <span className={`text-xs ${active ? 'text-emerald-600' : 'text-gray-500'}`}>
                             {active ? 'Actif' : 'Inactif'}

@@ -29,6 +29,7 @@ export const getTransactions = async ({
             id: true,
             createdAt: true,
             updatedAt: true,
+            stripePaymentIntentId: true,
             user: {
                 select: {
                     name: true,

@@ -23,6 +23,7 @@ import {
 	getNotifications,
 	getOptionalUser,
 } from "./server/auth.server";
+import { getConnectStatus } from "./server/stripe.server";
 
 export const links: LinksFunction = () => [
 	{ rel: "stylesheet", href: stylesheet },
@@ -34,6 +35,7 @@ export const loader = async ({ request, context }: LoaderFunctionArgs) => {
 		ReturnType<typeof getNotificationStats>
 	> | null = null;
 	let notifications: Awaited<ReturnType<typeof getNotifications>> | null = null;
+	let connectStatus: Awaited<ReturnType<typeof getConnectStatus>> | null = null;
 
 	if (user) {
 		notificationStats = await getNotificationStats({
@@ -41,12 +43,14 @@ export const loader = async ({ request, context }: LoaderFunctionArgs) => {
 			userId: user.id,
 		});
 		notifications = await getNotifications({ context, userId: user.id });
+		connectStatus = await getConnectStatus({ context, userId: user.id });
 	}
 
 	return json({
 		user,
 		notificationStats,
 		notifications,
+		connectStatus,
 	});
 };
 
@@ -73,6 +77,14 @@ export const useNotifications = () => {
 		return null;
 	}
 	return data.notifications;
+};
+
+export const useConnectStatus = () => {
+	const data = useRouteLoaderData<typeof loader>("root");
+	if (!data) {
+		return null;
+	}
+	return data.connectStatus;
 };
 
 export const useUser = () => {

@@ -42,10 +42,9 @@ export const Navbar = ({ logo }: { logo: string }) => {
     const Badge = ({ count, pulse = false }: { count: number; pulse?: boolean }) => {
         if (count === 0) return null;
         return (
-            <span 
-                className={`absolute -top-1 -right-1 bg-vert text-bleu text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center ${
-                    pulse ? 'animate-pulse' : ''
-                }`}
+            <span
+                className={`absolute -top-1 -right-1 bg-vert text-bleu text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center ${pulse ? 'animate-pulse' : ''
+                    }`}
             >
                 {count > 9 ? '9+' : count}
             </span>
@@ -68,13 +67,12 @@ export const Navbar = ({ logo }: { logo: string }) => {
         };
 
         return (
-            <Link 
+            <Link
                 to={`/transactions/${notification.transactionId}`}
-                className={`block p-3 border-b transition-colors ${
-                    isMobile 
+                className={`block p-3 border-b transition-colors ${isMobile
                         ? `${notification.urgent ? 'bg-orange-900/30 border-orange-700/50' : 'bg-white/5 border-white/10'} hover:bg-white/10`
                         : `${notification.urgent ? 'bg-orange-50 border-orange-100' : 'bg-white border-gray-100'} hover:bg-gray-50`
-                }`}
+                    }`}
                 onClick={() => {
                     setIsNotificationOpen(false);
                     setIsMobileNotificationOpen(false);
@@ -85,31 +83,27 @@ export const Navbar = ({ logo }: { logo: string }) => {
                     <span className="text-lg flex-shrink-0">{getIcon()}</span>
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
-                            <p className={`text-sm font-medium ${
-                                isMobile 
-                                    ? (notification.urgent ? 'text-orange-200' : 'text-white') 
+                            <p className={`text-sm font-medium ${isMobile
+                                    ? (notification.urgent ? 'text-orange-200' : 'text-white')
                                     : (notification.urgent ? 'text-orange-800' : 'text-gray-900')
-                            }`}>
+                                }`}>
                                 {notification.title}
                             </p>
                             {notification.urgent && (
-                                <span className={`text-xs px-2 py-1 rounded-full ${
-                                    isMobile 
-                                        ? 'bg-orange-200 text-orange-800' 
+                                <span className={`text-xs px-2 py-1 rounded-full ${isMobile
+                                        ? 'bg-orange-200 text-orange-800'
                                         : 'bg-orange-100 text-orange-800'
-                                }`}>
+                                    }`}>
                                     Urgent
                                 </span>
                             )}
                         </div>
-                        <p className={`text-sm mt-1 line-clamp-2 ${
-                            isMobile ? 'text-white/80' : 'text-gray-600'
-                        }`}>
+                        <p className={`text-sm mt-1 line-clamp-2 ${isMobile ? 'text-white/80' : 'text-gray-600'
+                            }`}>
                             {notification.description}
                         </p>
-                        <p className={`text-xs mt-1 ${
-                            isMobile ? 'text-white/60' : 'text-gray-400'
-                        }`}>
+                        <p className={`text-xs mt-1 ${isMobile ? 'text-white/60' : 'text-gray-400'
+                            }`}>
                             {formatDate({ date: notification.createdAt })}
                         </p>
                     </div>
@@ -142,8 +136,8 @@ export const Navbar = ({ logo }: { logo: string }) => {
                     ))}
                 </div>
                 <div className="p-3 border-t border-gray-200 bg-gray-50">
-                    <Link 
-                        to="/transactions" 
+                    <Link
+                        to="/transactions"
                         className="text-sm text-bleu hover:text-bleuClair font-medium"
                         onClick={() => setIsNotificationOpen(false)}
                     >
@@ -171,8 +165,8 @@ export const Navbar = ({ logo }: { logo: string }) => {
                     <NotificationItem key={notification.id} notification={notification} isMobile={true} />
                 ))}
                 <div className="p-3 border-t border-white/20 bg-bleu/60">
-                    <Link 
-                        to="/transactions" 
+                    <Link
+                        to="/transactions"
                         className="text-sm text-vert hover:text-bleuClair font-medium"
                         onClick={() => {
                             setIsMobileNotificationOpen(false);
@@ -187,18 +181,16 @@ export const Navbar = ({ logo }: { logo: string }) => {
     };
 
     // Styles pour les liens de navigation
-    const navLinkClass = ({ isActive }: { isActive: boolean }) => 
-        `text-sm font-medium transition-colors px-3 py-2 rounded-md relative ${
-            isActive 
-                ? 'bg-white/20 text-white border-b-2 border-vert' 
-                : 'hover:text-bleuClair hover:bg-white/10'
+    const navLinkClass = ({ isActive }: { isActive: boolean }) =>
+        `text-sm font-medium transition-colors px-3 py-2 rounded-md relative ${isActive
+            ? 'bg-white/20 text-white border-b-2 border-vert'
+            : 'hover:text-bleuClair hover:bg-white/10'
         }`;
 
-    const mobileNavLinkClass = ({ isActive }: { isActive: boolean }) => 
-        `text-sm font-medium transition-colors px-3 py-2 rounded-md text-center relative ${
-            isActive 
-                ? 'bg-white/20 text-white border-l-4 border-vert' 
-                : 'hover:text-bleuClair hover:bg-white/10'
+    const mobileNavLinkClass = ({ isActive }: { isActive: boolean }) =>
+        `text-sm font-medium transition-colors px-3 py-2 rounded-md text-center relative ${isActive
+            ? 'bg-white/20 text-white border-l-4 border-vert'
+            : 'hover:text-bleuClair hover:bg-white/10'
         }`;
 
     return (
@@ -207,7 +199,7 @@ export const Navbar = ({ logo }: { logo: string }) => {
                 <Link to='/' className='hover:opacity-80 transition-opacity'>
                     <img src={logo} className='w-full h-auto max-w-[100px] sm:max-w-[140px]' alt='Logo' />
                 </Link>
-                
+
                 {/* Menu hamburger pour mobile */}
                 <button
                     onClick={toggleMenu}
@@ -219,13 +211,13 @@ export const Navbar = ({ logo }: { logo: string }) => {
                     <span className={`w-6 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></span>
                     {/* Badge total pour le menu mobile */}
                     {notificationStats && (
-                        <Badge 
-                            count={notificationStats.pendingOffers + notificationStats.pendingReplies} 
+                        <Badge
+                            count={notificationStats.pendingOffers + notificationStats.pendingReplies}
                             pulse={notificationStats.pendingOffers > 0}
                         />
                     )}
                 </button>
-                
+
                 {/* Menu desktop */}
                 <div className='hidden lg:flex items-center gap-6'>
                     {user ? (
@@ -233,33 +225,33 @@ export const Navbar = ({ logo }: { logo: string }) => {
                             <span className='text-sm font-medium bg-white/10 px-3 py-1 rounded-full'>
                                 Bonjour, {user.name}
                             </span>
-                            
+
                             <div className='flex items-center gap-4'>
-                                <NavLink 
-                                    to='/transactions' 
+                                <NavLink
+                                    to='/transactions'
                                     className={navLinkClass}
                                 >
                                     Mes demandes
                                     {notificationStats && (
-                                        <Badge 
-                                            count={notificationStats.pendingOffers + notificationStats.pendingReplies} 
+                                        <Badge
+                                            count={notificationStats.pendingOffers + notificationStats.pendingReplies}
                                             pulse={notificationStats.pendingOffers > 0 || notificationStats.pendingReplies > 0}
                                         />
                                     )}
                                 </NavLink>
-                                
-                                <NavLink 
-                                    to='/my-services' 
+
+                                <NavLink
+                                    to='/my-services'
                                     className={navLinkClass}
                                 >
                                     Mes services
                                     {notificationStats && (
-                                        <Badge 
-                                            count={notificationStats.activeOffers} 
+                                        <Badge
+                                            count={notificationStats.activeOffers}
                                         />
                                     )}
                                 </NavLink>
-                                
+
                                 {/* Dropdown Notifications */}
                                 <div className="relative" ref={notificationRef}>
                                     <button
@@ -268,26 +260,33 @@ export const Navbar = ({ logo }: { logo: string }) => {
                                     >
                                         🔔
                                         {notificationStats && (
-                                            <Badge 
-                                                count={notificationStats.pendingOffers + notificationStats.pendingReplies} 
+                                            <Badge
+                                                count={notificationStats.pendingOffers + notificationStats.pendingReplies}
                                                 pulse={notificationStats.pendingOffers > 0 || notificationStats.pendingReplies > 0}
                                             />
                                         )}
                                     </button>
-                                    
+
                                     {isNotificationOpen && <NotificationDropdown />}
                                 </div>
-                                
-                                <NavLink 
-                                    to='/profile' 
+
+                                <NavLink
+                                    to='/prestataires'
+                                    className={navLinkClass}
+                                >
+                                    Prestataires
+                                </NavLink>
+
+                                <NavLink
+                                    to='/profile'
                                     className={navLinkClass}
                                 >
                                     Mon profil
                                 </NavLink>
-                                
+
                                 <form method='POST' action='/auth/logout'>
-                                    <button 
-                                        type='submit' 
+                                    <button
+                                        type='submit'
                                         className='text-sm font-medium hover:text-khmerCurry transition-colors px-3 py-2 rounded-md hover:bg-white/10'
                                     >
                                         Se déconnecter
@@ -297,14 +296,14 @@ export const Navbar = ({ logo }: { logo: string }) => {
                         </>
                     ) : (
                         <div className='flex items-center gap-4'>
-                            <NavLink 
-                                to='/login' 
+                            <NavLink
+                                to='/login'
                                 className={navLinkClass}
                             >
                                 Connexion
                             </NavLink>
-                            <Link 
-                                to='/register' 
+                            <Link
+                                to='/register'
                                 className='text-sm font-medium bg-vert text-bleu px-4 py-2 rounded-md hover:bg-vert/90 transition-colors'
                             >
                                 Inscription
@@ -313,7 +312,7 @@ export const Navbar = ({ logo }: { logo: string }) => {
                     )}
                 </div>
             </div>
-            
+
             {/* Menu mobile */}
             <div className={`lg:hidden transition-all duration-300 ${isMenuOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'}`}>
                 <div className='pt-4 pb-2 border-t border-white/20 mt-4'>
@@ -322,7 +321,7 @@ export const Navbar = ({ logo }: { logo: string }) => {
                             <div className='text-sm font-medium bg-white/10 px-3 py-2 rounded-md text-center'>
                                 Bonjour, {user.name}
                             </div>
-                            
+
                             {/* Bouton Notifications Mobile */}
                             <button
                                 onClick={toggleMobileNotifications}
@@ -330,59 +329,66 @@ export const Navbar = ({ logo }: { logo: string }) => {
                             >
                                 <span>🔔 Notifications</span>
                                 {notificationStats && (
-                                    <span className={`bg-vert text-bleu text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center ${
-                                        notificationStats.pendingOffers > 0 || notificationStats.pendingReplies > 0 ? 'animate-pulse' : ''
-                                    }`}>
+                                    <span className={`bg-vert text-bleu text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center ${notificationStats.pendingOffers > 0 || notificationStats.pendingReplies > 0 ? 'animate-pulse' : ''
+                                        }`}>
                                         {(notificationStats.pendingOffers + notificationStats.pendingReplies) > 9 ? '9+' : (notificationStats.pendingOffers + notificationStats.pendingReplies)}
                                     </span>
                                 )}
                             </button>
-                            
+
                             {/* Liste des notifications mobile */}
                             {isMobileNotificationOpen && (
                                 <div className="mx-2 mb-2">
                                     <MobileNotificationsList />
                                 </div>
                             )}
-                            
-                            <NavLink 
-                                to='/transactions' 
+
+                            <NavLink
+                                to='/prestataires'
+                                className={mobileNavLinkClass}
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                Prestataires
+                            </NavLink>
+
+                            <NavLink
+                                to='/transactions'
                                 className={mobileNavLinkClass}
                                 onClick={() => setIsMenuOpen(false)}
                             >
                                 <span>Mes demandes</span>
                                 {notificationStats && (
-                                    <Badge 
-                                        count={notificationStats.pendingOffers + notificationStats.pendingReplies} 
+                                    <Badge
+                                        count={notificationStats.pendingOffers + notificationStats.pendingReplies}
                                         pulse={notificationStats.pendingOffers > 0 || notificationStats.pendingReplies > 0}
                                     />
                                 )}
                             </NavLink>
-                            
-                            <NavLink 
-                                to='/my-services' 
+
+                            <NavLink
+                                to='/my-services'
                                 className={mobileNavLinkClass}
                                 onClick={() => setIsMenuOpen(false)}
                             >
                                 <span>Mes services</span>
                                 {notificationStats && (
-                                    <Badge 
-                                        count={notificationStats.activeOffers} 
+                                    <Badge
+                                        count={notificationStats.activeOffers}
                                     />
                                 )}
                             </NavLink>
-                            
-                            <NavLink 
-                                to='/profile' 
+
+                            <NavLink
+                                to='/profile'
                                 className={mobileNavLinkClass}
                                 onClick={() => setIsMenuOpen(false)}
                             >
                                 Mon profil
                             </NavLink>
-                            
+
                             <form method='POST' action='/auth/logout' className='w-full'>
-                                <button 
-                                    type='submit' 
+                                <button
+                                    type='submit'
                                     className='w-full text-sm font-medium hover:text-khmerCurry transition-colors px-3 py-2 rounded-md hover:bg-white/10'
                                 >
                                     Se déconnecter
@@ -391,15 +397,15 @@ export const Navbar = ({ logo }: { logo: string }) => {
                         </div>
                     ) : (
                         <div className='flex flex-col gap-3'>
-                            <NavLink 
-                                to='/login' 
+                            <NavLink
+                                to='/login'
                                 className={mobileNavLinkClass}
                                 onClick={() => setIsMenuOpen(false)}
                             >
                                 Connexion
                             </NavLink>
-                            <Link 
-                                to='/register' 
+                            <Link
+                                to='/register'
                                 className='text-sm font-medium bg-vert text-bleu px-4 py-2 rounded-md hover:bg-vert/90 transition-colors text-center'
                                 onClick={() => setIsMenuOpen(false)}
                             >

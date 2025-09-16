@@ -15,9 +15,9 @@ type Message = SerializeFrom<
 >["messages"][0];
 
 // Avatar component that shows either the user's avatar or initials
-const Avatar = ({ user, className = "w-6 h-6" }: { 
-    user: { name: string | null; avatarUrl?: string }, 
-    className?: string 
+const Avatar = ({ user, className = "w-6 h-6" }: {
+    user: { name: string | null; avatarUrl?: string },
+    className?: string
 }) => {
     const getInitials = (name: string | null) => {
         if (!name) return "?";
@@ -79,15 +79,17 @@ export const Chatbox = ({ messages, transaction }: { messages: Message[], transa
     const groupedMessages = messages.reduce((groups, message, index) => {
         const prevMessage = messages[index - 1];
         const isNewGroup = !prevMessage || prevMessage.userId !== message.userId;
-        
+
         if (isNewGroup) {
             groups.push([message]);
         } else {
             groups[groups.length - 1].push(message);
         }
-        
+
         return groups;
     }, [] as Message[][]);
+
+    const isOfferAlreadyAccepted = messages.some((m) => m.status === TransactionMessageStatus.ACCEPTED_OFFER);
 
     return (
         <div className="space-y-4">
@@ -97,10 +99,10 @@ export const Chatbox = ({ messages, transaction }: { messages: Message[], transa
                 className="space-y-4 max-h-[400px] overflow-y-auto p-4 bg-gray-50 rounded-lg"
             >
                 {groupedMessages.map((group, groupIndex) => (
-                    <MessageGroup 
-                        key={groupIndex} 
-                        messages={group} 
-                        transaction={transaction} 
+                    <MessageGroup
+                        key={groupIndex}
+                        messages={group}
+                        transaction={transaction}
                     />
                 ))}
             </div>
@@ -139,51 +141,53 @@ export const Chatbox = ({ messages, transaction }: { messages: Message[], transa
             </sendMessageFetcher.Form>
 
             {/* Offer Form */}
-            <div className="border-t pt-4">
-                <sendOfferFetcher.Form
-                    {...getFormProps(offerForm)}
-                    method="POST"
-                    className="bg-green-50 rounded-lg p-4 space-y-3"
-                >
-                    <h3 className="font-medium text-green-800 text-sm">Faire une offre de prix</h3>
-                    <div className="flex gap-3 items-end">
-                        <div className="flex-1">
-                            <Field
-                                inputProps={{
-                                    ...getInputProps(offerFields.price, {
-                                        type: "number",
-                                    }),
-                                    step: "0.01",
-                                    min: "0",
-                                    placeholder: "0.00",
-                                }}
-                                labelProps={{
-                                    children: "Prix (€)",
-                                    className: "text-sm font-medium text-green-800",
-                                }}
-                                errors={offerFields.price.errors}
-                            />
+            {isOfferAlreadyAccepted ? null : (
+                <div className="border-t pt-4">
+                    <sendOfferFetcher.Form
+                        {...getFormProps(offerForm)}
+                        method="POST"
+                        className="bg-green-50 rounded-lg p-4 space-y-3"
+                    >
+                        <h3 className="font-medium text-green-800 text-sm">Faire une offre de prix</h3>
+                        <div className="flex gap-3 items-end">
+                            <div className="flex-1">
+                                <Field
+                                    inputProps={{
+                                        ...getInputProps(offerFields.price, {
+                                            type: "number",
+                                        }),
+                                        step: "0.01",
+                                        min: "0",
+                                        placeholder: "0.00",
+                                    }}
+                                    labelProps={{
+                                        children: "Prix (€)",
+                                        className: "text-sm font-medium text-green-800",
+                                    }}
+                                    errors={offerFields.price.errors}
+                                />
+                            </div>
+                            <Button
+                                variant="greenOutline"
+                                disabled={sendOfferFetcher.state === "submitting"}
+                                type="submit"
+                                name="action"
+                                value="offer"
+                                size="sm"
+                            >
+                                {sendOfferFetcher.state === "submitting" ? "Envoi..." : "Proposer"}
+                            </Button>
                         </div>
-                        <Button
-                            variant="greenOutline"
-                            disabled={sendOfferFetcher.state === "submitting"}
-                            type="submit"
-                            name="action"
-                            value="offer"
-                            size="sm"
-                        >
-                            {sendOfferFetcher.state === "submitting" ? "Envoi..." : "Proposer"}
-                        </Button>
-                    </div>
-                </sendOfferFetcher.Form>
-            </div>
+                    </sendOfferFetcher.Form>
+                </div>
+            )}
         </div>
     );
 };
 
-const MessageGroup = ({ messages, transaction }: { 
-    messages: Message[], 
-    transaction: SerializeFrom<Awaited<ReturnType<typeof getTransaction>>> 
+const MessageGroup = ({ messages, transaction }: {
+    messages: Message[],
+    transaction: SerializeFrom<Awaited<ReturnType<typeof getTransaction>>>
 }) => {
     const user = useUser();
     const firstMessage = messages[0];
@@ -199,8 +203,8 @@ const MessageGroup = ({ messages, transaction }: {
                         <div className="text-xs text-gray-500">
                             {firstMessage.user.name}
                         </div>
-                        <MessageBubble 
-                            message={firstMessage} 
+                        <MessageBubble
+                            message={firstMessage}
                             transaction={transaction}
                             isOwnMessage={isOwnMessage}
                         />
@@ -213,8 +217,8 @@ const MessageGroup = ({ messages, transaction }: {
                 {/* Messages suivants alignés à droite */}
                 {messages.slice(1).map((message) => (
                     <div key={message.id} className="flex justify-end">
-                        <MessageBubble 
-                            message={message} 
+                        <MessageBubble
+                            message={message}
                             transaction={transaction}
                             isOwnMessage={isOwnMessage}
                         />
@@ -236,8 +240,8 @@ const MessageGroup = ({ messages, transaction }: {
                     <div className="text-xs text-gray-500">
                         {firstMessage.user.name}
                     </div>
-                    <MessageBubble 
-                        message={firstMessage} 
+                    <MessageBubble
+                        message={firstMessage}
                         transaction={transaction}
                         isOwnMessage={isOwnMessage}
                     />
@@ -247,8 +251,8 @@ const MessageGroup = ({ messages, transaction }: {
             {/* Messages suivants alignés à gauche */}
             {messages.slice(1).map((message) => (
                 <div key={message.id}>
-                    <MessageBubble 
-                        message={message} 
+                    <MessageBubble
+                        message={message}
                         transaction={transaction}
                         isOwnMessage={isOwnMessage}
                     />
@@ -258,8 +262,8 @@ const MessageGroup = ({ messages, transaction }: {
     );
 };
 
-const MessageBubble = ({ message, transaction, isOwnMessage }: { 
-    message: Message, 
+const MessageBubble = ({ message, transaction, isOwnMessage }: {
+    message: Message,
     transaction: SerializeFrom<Awaited<ReturnType<typeof getTransaction>>>,
     isOwnMessage: boolean
 }) => {
@@ -268,11 +272,15 @@ const MessageBubble = ({ message, transaction, isOwnMessage }: {
     const declineOfferFetcher = useFetcher<typeof action>();
 
     const UserAction = () => {
+        // Hide accept/decline UI if any offer has already been accepted (e.g. via Checkout)
+        const alreadyAccepted = transaction.messages.some((m) => m.status === TransactionMessageStatus.ACCEPTED_OFFER);
+        if (alreadyAccepted) return null;
+
         if (!message.price) return null;
-        
+
         if (message.status === TransactionMessageStatus.PENDING_OFFER) {
             if (user.id !== transaction.offer.user.id) return null;
-            
+
             return (
                 <div className="flex items-center gap-2 mt-2">
                     <acceptOfferFetcher.Form method="POST" className="inline">
@@ -302,7 +310,7 @@ const MessageBubble = ({ message, transaction, isOwnMessage }: {
                 </div>
             );
         }
-        
+
         if (message.status === TransactionMessageStatus.ACCEPTED_OFFER) {
             return <div className="text-green-600 text-xs mt-1 font-medium">✓ Offre acceptée</div>;
         }
@@ -310,7 +318,7 @@ const MessageBubble = ({ message, transaction, isOwnMessage }: {
         if (message.status === TransactionMessageStatus.REJECTED_OFFER) {
             return <div className="text-gray-500 text-xs mt-1">✗ Offre refusée</div>;
         }
-        
+
         return null;
     };
 
@@ -325,7 +333,7 @@ const MessageBubble = ({ message, transaction, isOwnMessage }: {
             }
             return "bg-gray-100 border border-gray-300 text-gray-800 font-medium";
         }
-        
+
         // Regular message - simple gray background
         return "bg-gray-100 border border-gray-200 text-gray-900";
     };
@@ -337,13 +345,13 @@ const MessageBubble = ({ message, transaction, isOwnMessage }: {
                     {message.content}
                 </div>
             </div>
-            
+
             <div className={`flex items-center ${isOwnMessage ? 'justify-end' : 'justify-start'}`}>
                 <div className="text-xs text-gray-500">
                     {formatDate({ date: message.createdAt })}
                 </div>
             </div>
-            
+
             <UserAction />
         </div>
     );
