@@ -82,7 +82,7 @@ export const CreateOfferSchema = z.object({
       });
       return false;
     }
-  }),
+  }).optional(),
 });
 
 export const action = async ({
@@ -209,8 +209,8 @@ export default function CreateOffer() {
           />
         )}
         {offer?.imageUrl ? (
-            <img src={offer.imageUrl} className="w-30 h-auto shrink-0" />
-        ) : null  }
+          <img src={offer.imageUrl} className="w-30 h-auto shrink-0" />
+        ) : null}
         <div className="grid gap-1">
           <Label className="sr-only" htmlFor="image">
             Image

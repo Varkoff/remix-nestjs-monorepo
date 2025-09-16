@@ -168,8 +168,8 @@ export default function TransactionDetail() {
             <div className="max-w-4xl mx-auto px-4 py-4 sm:py-6">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-4">
-                    <Link 
-                        to="/transactions" 
+                    <Link
+                        to="/transactions"
                         className="inline-flex items-center gap-2 text-bleu hover:text-bleu/80 transition-colors"
                     >
                         <ArrowLeft className="size-4" />
@@ -240,6 +240,13 @@ export default function TransactionDetail() {
                                     <MessageCircle className="size-3" />
                                     <span>{data.messages.length} message{data.messages.length > 1 ? 's' : ''}</span>
                                 </div>
+                                {/* Paid indicator derives from presence of an accepted message */}
+                                {data.messages.some(m => m.status === 20) ? (
+                                    <div className="flex items-center gap-2 text-xs text-emerald-700 mt-1">
+                                        <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                                        <span>Payée</span>
+                                    </div>
+                                ) : null}
                             </div>
                         </div>
                     </div>

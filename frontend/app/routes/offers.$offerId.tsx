@@ -21,6 +21,7 @@ import { formatDate, formatPrice } from "~/lib/utils";
 import { useOptionalUser } from "~/root";
 import { getOptionalUser, requireUser } from "~/server/auth.server";
 import { getExistingTransaction, getOffer } from "~/server/offers.server";
+import { createCheckoutSessionForOffer, getConnectStatus } from "~/server/stripe.server";
 import { createTransaction } from "~/server/transactions.server";
 
 export const loader = async ({ params, context }: LoaderFunctionArgs) => {
@@ -46,14 +47,22 @@ export const loader = async ({ params, context }: LoaderFunctionArgs) => {
         });
     }
 
+    // Determine if offer is directly purchasable via Stripe Checkout
+    const sellerConnect = await getConnectStatus({
+        context,
+        userId: foundOffer.user.id,
+    });
+    const canBuyNow = Boolean(foundOffer.isStripeSynced && sellerConnect.chargesEnabled);
+
     return json({
         offer: foundOffer,
-        existingTransaction
+        existingTransaction,
+        canBuyNow,
     });
 };
 
 const CreateTransactionSchema = z.object({
-    action: z.literal("create-transaction"),
+    action: z.enum(["create-transaction", "buy-now"]),
 });
 
 export const action = async ({
@@ -74,7 +83,7 @@ export const action = async ({
     const formData = await request.formData();
     const submission = await parseWithZod(formData, {
         async: true,
-        schema: CreateTransactionSchema.superRefine(async (_data, ctx) => {
+        schema: CreateTransactionSchema.superRefine(async (data, ctx) => {
             const existingOffer = await context.remixService.prisma.offer.findUnique({
                 where: {
                     id: offerId,
@@ -83,6 +92,8 @@ export const action = async ({
                 select: {
                     userId: true,
                     id: true,
+                    stripeProductId: true,
+                    stripePriceId: true,
                 },
             });
 
@@ -102,21 +113,24 @@ export const action = async ({
                 return false;
             }
 
-            const existingTransaction =
-                await context.remixService.prisma.transaction.findUnique({
-                    where: {
-                        offerId_userId: {
-                            offerId: existingOffer.id,
-                            userId: user.id,
+            // Only block on existing conversation for the conversation flow
+            if (data.action === "create-transaction") {
+                const existingTransaction =
+                    await context.remixService.prisma.transaction.findUnique({
+                        where: {
+                            offerId_userId: {
+                                offerId: existingOffer.id,
+                                userId: user.id,
+                            },
                         },
-                    },
-                });
+                    });
 
-            if (existingTransaction) {
-                ctx.addIssue({
-                    code: "custom",
-                    message: "Vous avez déjà créé une transaction pour cette offre",
-                });
+                if (existingTransaction) {
+                    ctx.addIssue({
+                        code: "custom",
+                        message: "Vous avez déjà créé une transaction pour cette offre",
+                    });
+                }
             }
         }),
     });
@@ -128,6 +142,25 @@ export const action = async ({
                 status: 400,
             },
         );
+    }
+
+    const actionType = submission.value.action;
+
+    if (actionType === "buy-now") {
+        try {
+            const { url } = await createCheckoutSessionForOffer({
+                context,
+                offerId,
+                buyerUserId: user.id,
+                requestUrl: request.url,
+            });
+            return redirect(url);
+        } catch (error) {
+            return json(
+                { result: submission.reply({ formErrors: ["Impossible de créer le paiement Stripe."] }) },
+                { status: 400 },
+            );
+        }
     }
 
     const { id } = await createTransaction({
@@ -149,7 +182,7 @@ export default function OfferPage() {
         },
         lastResult: actionData?.result,
     });
-    const { offer, existingTransaction } = useLoaderData<typeof loader>();
+    const { offer, existingTransaction, canBuyNow } = useLoaderData<typeof loader>();
 
     const user = useOptionalUser();
     const isOwner = user?.id === offer.userId;
@@ -254,6 +287,11 @@ export default function OfferPage() {
                                                 >
                                                     Modifier mon offre
                                                 </Link>
+                                                {!offer.isStripeSynced ? (
+                                                    <p className="text-xs text-red-600 text-center">
+                                                        ● Non synchronisée avec Stripe
+                                                    </p>
+                                                ) : null}
                                                 <p className="text-sm text-gray-600 text-center">
                                                     Vous êtes le propriétaire de cette offre
                                                 </p>
@@ -273,6 +311,37 @@ export default function OfferPage() {
                                                     Vous avez déjà une conversation active pour cette offre
                                                 </p>
                                             </div>
+                                        ) : canBuyNow ? (
+                                            <Form
+                                                className="space-y-4"
+                                                {...getFormProps(form)}
+                                                method="POST"
+                                            >
+                                                <Button
+                                                    name="action"
+                                                    value="buy-now"
+                                                    type="submit"
+                                                    variant="primary"
+                                                    className="w-full py-3 text-lg font-semibold bg-gradient-to-r from-bleu to-persianIndigo hover:from-bleu/90 hover:to-persianIndigo/90 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
+                                                >
+                                                    🛒 Acheter maintenant
+                                                </Button>
+                                                {existingTransaction ? (
+                                                    <Link
+                                                        className={buttonVariants({
+                                                            variant: 'secondary',
+                                                            className: 'w-full',
+                                                        })}
+                                                        to={`/transactions/${existingTransaction?.id}`}
+                                                    >
+                                                        Voir ma conversation
+                                                    </Link>
+                                                ) : null}
+                                                <ErrorList errors={form.errors} />
+                                                <p className="text-xs text-gray-500 text-center">
+                                                    Paiement sécurisé avec Stripe
+                                                </p>
+                                            </Form>
                                         ) : (
                                             <Form
                                                 className="space-y-4"

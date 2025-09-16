@@ -3,7 +3,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { getPublicDir, startDevServer } from '@virgile/frontend';
 import { AppModule } from './app.module';
 
-import { urlencoded } from 'body-parser';
+import { raw, urlencoded } from 'body-parser';
 import RedisStore from 'connect-redis';
 import session from 'express-session';
 import Redis from 'ioredis';
@@ -16,6 +16,7 @@ async function bootstrap() {
   });
 
   await startDevServer(app);
+  app.use('/webhooks/stripe', raw({ type: 'application/json' }));
 
   // Initialize client
   const redisUrl = process.env.REDIS_URL || "redis://localhost:6379"

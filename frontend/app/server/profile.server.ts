@@ -17,6 +17,8 @@ export const getUserOffers = async ({
             active: true,
             recurring: true,
             imageFileKey: true,
+            stripeProductId: true,
+            stripePriceId: true,
         },
         where: {
             userId,
@@ -38,6 +40,7 @@ export const getUserOffers = async ({
             return {
                 ...offer,
                 imageUrl,
+                isStripeSynced: Boolean(offer.stripeProductId && offer.stripePriceId),
             };
         })
     );
@@ -66,7 +69,7 @@ export const createOffer = async ({
         })
         imageFileKey = fileKey;
     }
-    return await context.remixService.prisma.offer.create({
+    const created = await context.remixService.prisma.offer.create({
         data: {
             title: offerData.title,
             description: offerData.description,
@@ -82,6 +85,8 @@ export const createOffer = async ({
             id: true,
         },
     });
+    await context.remixService.stripe.upsertOfferProduct(created.id);
+    return created;
 };
 
 export const getUserOffer = async ({
@@ -138,7 +143,7 @@ export const editOffer = async ({
         })
         imageFileKey = fileKey;
     }
-    return await context.remixService.prisma.offer.update({
+    const updated = await context.remixService.prisma.offer.update({
         where: {
             id: offerId,
             userId,
@@ -159,6 +164,8 @@ export const editOffer = async ({
             id: true,
         },
     });
+    await context.remixService.stripe.upsertOfferProduct(updated.id);
+    return updated;
 };
 
 export const getUserWithAvatar = async ({

@@ -23,6 +23,13 @@ model User {
   updatedAt     DateTime @updatedAt
   avatarFileKey String?  @unique
 
+  // Stripe Connect
+  stripeAccountId  String? @unique
+  stripeCustomerId String? @unique
+  chargesEnabled   Boolean @default(false)
+  payoutsEnabled   Boolean @default(false)
+  detailsSubmitted Boolean @default(false)
+
   sessions     Session[]
   offers       Offer[]
   transactions Transaction[]
@@ -53,6 +60,10 @@ model Offer {
   user         User     @relation(fields: [userId], references: [id])
   imageFileKey String?  @unique
 
+  // Stripe Product/Price mapping (platform-side)
+  stripeProductId String? @unique
+  stripePriceId   String? @unique
+
   transactions Transaction[]
 }
 
@@ -66,6 +77,9 @@ model Transaction {
   userId   String
   user     User      @relation(fields: [userId], references: [id])
   messages Message[]
+
+  stripePaymentIntentId   String? @unique
+  stripeCheckoutSessionId String? @unique
 
   @@unique([offerId, userId])
 }
